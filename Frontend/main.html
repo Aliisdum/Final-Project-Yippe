@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uçuş Booking - Ana Səhifə</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-menu span {
+            cursor: pointer;
+        }
+
+        .profile-icon {
+            font-size: 24px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .profile-icon:hover {
+            color: #f39c12;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        /* CONTAINER */
+        .container {
+            padding: 30px;
+        }
+
+        .search-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .search-section h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-form input,
+        .search-form select {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .search-form input:focus,
+        .search-form select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
+        }
+
+        .search-btn {
+            background: #3498db;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+
+        .search-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        /* FLIGHTS LIST */
+        .flights-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .flights-section h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .flights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .flight-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f9fafb;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .flight-card:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+        }
+
+        .flight-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .flight-time {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .flight-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #27ae60;
+            background: #e8f8f5;
+            padding: 8px 12px;
+            border-radius: 5px;
+        }
+
+        .flight-route {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 15px 0;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .flight-route .arrow {
+            margin: 0 10px;
+            color: #3498db;
+        }
+
+        .flight-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .flight-info-item {
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+        }
+
+        .flight-info-item strong {
+            color: #2c3e50;
+        }
+
+        .booking-btn {
+            width: 100%;
+            background: #27ae60;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+
+        .booking-btn:hover {
+            background: #229954;
+        }
+
+        .booking-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 16px;
+            color: #7f8c8d;
+        }
+
+        .error {
+            background: #fadbd8;
+            color: #c0392b;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c0392b;
+        }
+
+        .success {
+            background: #d5f4e6;
+            color: #27ae60;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #27ae60;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+
+        .pagination button:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .pagination button.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo">
+            <i class="fas fa-plane"></i> Uçuş Booking
+        </div>
+        <div class="user-menu">
+            <span id="username"></span>
+            <div class="profile-icon" onclick="goToProfile()">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <button class="logout-btn" onclick="logout()">Çıxış</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Search Section -->
+        <div class="search-section">
+            <h2><i class="fas fa-search"></i> Uçuş Arayın</h2>
+            <div class="search-form">
+                <input type="text" id="origin" placeholder="Çıkış məntəqəsi (Şəhər kodu)">
+                <input type="text" id="destination" placeholder="Məqsəd (Şəhər kodu)">
+                <input type="number" id="minPrice" placeholder="Minimum Qiymət" step="0.01">
+                <input type="number" id="maxPrice" placeholder="Maksimum Qiymət" step="0.01">
+                <select id="priceSort">
+                    <option value="">Sort by Price</option>
+                    <option value="low">Ən Aşağı Qiymət Önce</option>
+                    <option value="high">Ən Yüksək Qiymət Önce</option>
+                </select>
+            </div>
+            <button class="search-btn" onclick="searchFlights()">
+                <i class="fas fa-search"></i> Arayın
+            </button>
+        </div>
+
+        <!-- Flights Section -->
+        <div class="flights-section">
+            <h2><i class="fas fa-list"></i> Mövcud Uçuşlar</h2>
+            <div id="message"></div>
+            <div id="flightsList" class="flights-grid">
+                <div class="loading"><i class="fas fa-spinner fa-spin"></i> Yüklənir...</div>
+            </div>
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+        <div style="background:white; padding:30px; border-radius:8px; max-width:500px; width:90%;">
+            <h3 id="bookingFlightInfo">Uçuş Təfərrüatı</h3>
+            <div style="margin:20px 0;">
+                <label>Yolcu Sayı:</label>
+                <input type="number" id="passengerCount" min="1" max="10" value="1" style="width:100%; padding:10px; margin:10px 0; border:1px solid #ddd; border-radius:4px;">
+                <label>Oturacaq Sinfini Seçin:</label>
+                <select id="seatClass" style="width:100%; padding:10px; margin:10px 0; border:1px solid #ddd; border-radius:4px;">
+                    <option value="ECONOMY">Ekonom</option>
+                    <option value="BUSINESS">Biznes</option>
+                    <option value="FIRST">Birinci Sinif</option>
+                </select>
+            </div>
+            <div style="display:flex; gap:10px;">
+                <button onclick="confirmBooking()" style="flex:1; background:#27ae60; color:white; padding:12px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Təsdiq et</button>
+                <button onclick="closeBookingModal()" style="flex:1; background:#e74c3c; color:white; padding:12px; border:none; border-radius:6px; cursor:pointer; font-weight:600;">Bağla</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 0;
+        let pageSize = 6;
+        let selectedFlight = null;
+        let allFlights = [];
+
+        // Check authentication
+        window.onload = () => {
+            const token = localStorage.getItem("accessToken");
+            const username = localStorage.getItem("username");
+            
+            if (!token) {
+                window.location.href = "login.html";
+                return;
+            }
+            
+            document.getElementById("username").innerText = "Salam, " + (username || "Müştəri");
+            loadFlights();
+        };
+
+        async function loadFlights() {
+            try {
+                const response = await fetch("http://localhost:8080/api/flights?page=0&size=" + pageSize);
+                
+                if (!response.ok) {
+                    throw new Error("Uçuşlar yükləmə uğursuz oldu");
+                }
+
+                const data = await response.json();
+                
+                if (data.success && data.data && data.data.content) {
+                    allFlights = data.data.content;
+                    displayFlights(allFlights);
+                    updatePagination(data.data);
+                } else {
+                    document.getElementById("flightsList").innerHTML = '<div class="empty-state">Uçuş tapılmadı</div>';
+                }
+            } catch (error) {
+                console.error("Xəta:", error);
+                showMessage("Kəsə dəqiqəsi ilə uçuşlar yükləmə uğursuz oldu", "error");
+            }
+        }
+
+        async function searchFlights() {
+            const origin = document.getElementById("origin").value.trim();
+            const destination = document.getElementById("destination").value.trim();
+            const minPrice = document.getElementById("minPrice").value;
+            const maxPrice = document.getElementById("maxPrice").value;
+
+            if (!origin || !destination) {
+                showMessage("Xahiş edirik çıkış və məqsəd saçlayın", "error");
+                return;
+            }
+
+            try {
+                document.getElementById("flightsList").innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Aranır...</div>';
+                
+                let url = `http://localhost:8080/api/flights/search/route?origin=${origin}&destination=${destination}&page=0&size=${pageSize}`;
+                
+                if (minPrice && maxPrice) {
+                    url = `http://localhost:8080/api/flights/search/price?origin=${origin}&destination=${destination}&minPrice=${minPrice}&maxPrice=${maxPrice}&page=0&size=${pageSize}`;
+                }
+
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error("Axtarış uğursuz oldu");
+                }
+
+                const data = await response.json();
+                
+                if (data.success && data.data && data.data.content) {
+                    allFlights = data.data.content;
+                    displayFlights(allFlights);
+                    updatePagination(data.data);
+                    showMessage(allFlights.length + " uçuş tapıldı", "success");
+                } else {
+                    document.getElementById("flightsList").innerHTML = '<div class="empty-state">Heç bir uçuş tapılmadı</div>';
+                }
+            } catch (error) {
+                console.error("Xəta:", error);
+                showMessage("Axtarış zamanı xəta baş verdi", "error");
+            }
+        }
+
+        function displayFlights(flights) {
+            const flightsList = document.getElementById("flightsList");
+            
+            if (!flights || flights.length === 0) {
+                flightsList.innerHTML = '<div class="empty-state">Heç bir uçuş tapılmadı</div>';
+                return;
+            }
+
+            flightsList.innerHTML = flights.map(flight => `
+                <div class="flight-card" onclick="selectFlight(${flight.id}, '${flight.flightNumber}', '${flight.origin}', '${flight.destination}', '${flight.departureTime}', '${flight.price}')">
+                    <div class="flight-header">
+                        <div class="flight-time">${flight.flightNumber}</div>
+                        <div class="flight-price">₼${parseFloat(flight.price).toFixed(2)}</div>
+                    </div>
+                    
+                    <div class="flight-route">
+                        <div><strong>${flight.origin}</strong></div>
+                        <div class="arrow">→</div>
+                        <div><strong>${flight.destination}</strong></div>
+                    </div>
+
+                    <div class="flight-info">
+                        <div class="flight-info-item">
+                            <strong>Hareket:</strong><br>${new Date(flight.departureTime).toLocaleString('az-AZ')}
+                        </div>
+                        <div class="flight-info-item">
+                            <strong>Bitmə:</strong><br>${new Date(flight.arrivalTime).toLocaleString('az-AZ')}
+                        </div>
+                        <div class="flight-info-item">
+                            <strong>Havayolu:</strong><br>${flight.airline}
+                        </div>
+                        <div class="flight-info-item">
+                            <strong>Samolyot:</strong><br>${flight.plane.model}
+                        </div>
+                    </div>
+
+                    <button class="booking-btn">
+                        <i class="fas fa-ticket-alt"></i> Sifariş et
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function selectFlight(id, flightNumber, origin, destination, departureTime, price) {
+            selectedFlight = {
+                id: id,
+                flightNumber: flightNumber,
+                origin: origin,
+                destination: destination,
+                departureTime: departureTime,
+                price: price
+            };
+            
+            document.getElementById("bookingFlightInfo").innerHTML = `
+                <strong>${flightNumber}</strong> - ${origin} → ${destination} (₼${price})<br>
+                <small>Hareket: ${new Date(departureTime).toLocaleString('az-AZ')}</small>
+            `;
+            
+            document.getElementById("bookingModal").style.display = "flex";
+        }
+
+        function closeBookingModal() {
+            document.getElementById("bookingModal").style.display = "none";
+            selectedFlight = null;
+        }
+
+        async function confirmBooking() {
+            if (!selectedFlight) return;
+
+            const passengerCount = parseInt(document.getElementById("passengerCount").value);
+            const seatClass = document.getElementById("seatClass").value;
+            const token = localStorage.getItem("accessToken");
+
+            const bookingRequest = {
+                flightId: selectedFlight.id,
+                passengerCount: passengerCount,
+                seatClass: seatClass
+            };
+
+            try {
+                const response = await fetch("http://localhost:8080/api/bookings", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + token
+                    },
+                    body: JSON.stringify(bookingRequest)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showMessage("Sifariş uğurla yaradıldı!", "success");
+                    closeBookingModal();
+                    setTimeout(() => {
+                        window.location.href = "payment.html?bookingId=" + data.data.id;
+                    }, 1000);
+                } else {
+                    showMessage(data.message || "Sifariş yaratmada xəta baş verdi", "error");
+                }
+            } catch (error) {
+                console.error("Xəta:", error);
+                showMessage("Sifariş yaratırkən xəta baş verdi", "error");
+            }
+        }
+
+        function updatePagination(pageData) {
+            const pagination = document.getElementById("pagination");
+            if (pageData.totalPages <= 1) {
+                pagination.innerHTML = "";
+                return;
+            }
+
+            let html = "";
+            for (let i = 0; i < pageData.totalPages; i++) {
+                html += `<button ${i === currentPage ? 'class="active"' : ''} onclick="goToPage(${i})">${i + 1}</button>`;
+            }
+            pagination.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            loadFlights();
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById("message");
+            messageDiv.innerHTML = `<div class="${type}">${message}</div>`;
+            setTimeout(() => {
+                messageDiv.innerHTML = "";
+            }, 5000);
+        }
+
+        function goToProfile() {
+            window.location.href = "customerProfile.html";
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "login.html";
+        }
+
+        // Close modal when clicking outside
+        document.getElementById("bookingModal").addEventListener("click", (e) => {
+            if (e.target.id === "bookingModal") {
+                closeBookingModal();
+            }
+        });
+    </script>
+
+</body>
+</html>
+
+        loadCategories();
+
+        function goToProfile() {
+            window.location.href = "customerProfile.html";
+        }
+    </script>
+
+</body>
+</html>

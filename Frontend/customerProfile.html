@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uçuş Booking - Müştəri Profili</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+}
+
+.header {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.logout {
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.logout:hover {
+    text-decoration: underline;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+    max-width: 420px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* ===== PROFILE IMAGE ===== */
+.profile-wrapper {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-pic {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #1976d2;
+    background: #eee;
+}
+
+/* ===== FILE INPUT ===== */
+input[type="file"] {
+    margin-top: 15px;
+}
+
+/* ===== BUTTONS ===== */
+button {
+    width: 100%;
+    padding: 11px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.upload-btn {
+    background: #1976d2;
+    color: white;
+}
+
+.upload-btn:hover {
+    background: #1259a8;
+}
+
+.delete-btn {
+    background: #e53935;
+    color: white;
+}
+
+.delete-btn:hover {
+    background: #c62828;
+}
+
+.edit-btn {
+    background: #f1f3f5;
+}
+
+.edit-btn a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+/* ===== PROFILE INFO ===== */
+.profile-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+.profile-item label {
+    color: #777;
+}
+
+.profile-item span {
+    font-weight: 500;
+    color: #333;
+}
+
+/* ===== RESULT ===== */
+#result {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #d32f2f;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 500px) {
+    .container {
+        margin: 20px;
+    }
+}
+</style>
+
+</head>
+<body>
+
+    <div class="header">
+        <h2>Mənim profilim</h2>
+        <div class="logout" onclick="logout()">Çıxış</div>
+    </div>
+
+    <div class="container">
+        <div id="result" class="result"></div>
+
+        <div class="profile-wrapper">
+            <img src="" alt="Profil şəkli" id="profileImage" class="profile-pic">
+        </div>
+
+
+
+        <input type="file" id="fileInput">
+        <button class="upload-btn" onclick="uploadPicture()">Şəkil yüklə</button>
+        <button class="delete-btn" onclick="deletePicture()">Şəkli sil</button>
+
+        <hr>
+
+        <div class="profile-item">
+            <label>Ad</label>
+            <span id="name"></span>
+        </div>
+        <div class="profile-item">
+            <label>Soyad</label>
+            <span id="surname"></span>
+        </div>
+        <div class="profile-item">
+            <label>Email</label>
+            <span id="email"></span>
+        </div>
+        <div class="profile-item">
+            <label>Telefon nömrəsi</label>
+            <span id="phone"></span>
+        </div>
+        <div class="profile-item">
+            <label>Doğum tarixi</label>
+            <span id="birthday"></span>
+        </div>
+        <div class="profile-item">
+            <label>İstifadəçi adı</label>
+            <span id="username"></span>
+        </div>
+
+        <button class="edit-btn">
+            <a href="customerUpdate.html">Redaktə et</a>
+        </button>
+
+
+        <div>
+            <button class="delete-btn" onclick="deleteProfile()">Hesabı Sil</button>
+        </div>
+    </div>
+
+    <script>
+            const token = localStorage.getItem("accessToken");
+
+            if(!token) {
+                window.location.href="login.html";
+            }
+
+        async function loadProfile() {
+            try {
+                const response = await fetch("http://localhost:8080/api/customers/me", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+
+                const data = await response.json();
+
+                if(!response.ok) {
+                    document.getElementById("result").innerText = data.message;
+                }
+
+            document.getElementById("name").innerText = data.name;
+            document.getElementById("surname").innerText = data.surname;
+            document.getElementById("email").innerText = data.email;
+            document.getElementById("phone").innerText = data.phone;
+            document.getElementById("birthday").innerText = data.birthday;
+            document.getElementById("username").innerText = data.username;
+
+            if(data.profilePictureUrl) {
+                document.getElementById("profileImage").src = "http://localhost:8080/api/files/download/" + data.profilePictureUrl;
+            } else {
+                document.getElementById("profileImage").src = "https://via.placeholder.com/120";
+            }
+
+            }catch(e) {
+                document.getElementById("result").innerText = "Profil məlumatlarını yükləmək mümkün olmadı";
+            }
+        }
+
+
+        async function uploadPicture() {
+            const fileInput = document.getElementById("fileInput");
+            if(!fileInput.files.length) {
+                alert("Şəkil seçin");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            const response = await fetch("http://localhost:8080/api/customers/upload-picture", {
+                method: "POST",
+                headers: {"Authorization" : "Bearer " + token},
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if(response.ok) {
+                document.getElementById("result").innerText = "Şəkil uğurla yükləndi";
+            } else {
+                document.getElementById("result").innerText = data.message;
+            }
+        }
+
+
+        async function deletePicture() {
+            const confirmDelete = confirm("Profil şəklini silmək istədiyiniə əminsiniz?");
+
+            if(!confirmDelete) {
+                return;
+            }
+
+            const response = await fetch("http://localhost:8080/api/customers/delete-picture", {
+                method: "DELETE",
+                headers: {"Authorization" : "Bearer " + token}
+            });
+            const data = await response.json();
+
+            if(response.ok) {
+                document.getElementById("result").innerText = "Şəkil uğurla silindi";
+            } else {
+                document.getElementById("result").innerText = data.message;
+            }
+            
+        }
+
+        function logout() {
+            localStorage.removeItem("accessToken");
+            window.location.href="login.html";
+        }
+
+
+        async function deleteProfile() {
+            const confirmDelete = confirm(
+                "Hesabınızı silmək istədiyinizə əminsinizmi?\nBu əməliyyat geri qaytarıla bilməz!"
+            );
+
+            if(!confirmDelete) {
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:8080/api/customers", {
+                    method:"DELETE",
+                    headers: {"Authorization" : "Bearer " + token}
+                });
+
+                const data = await response.json();
+
+                if(response.ok) {
+                    alert("Hesab silindi");
+                    localStorage.removeItem("accessToken");
+                    window.location.href="login.html";
+                } else {
+                    alert("Hesabı silmək mümkün olmadı")
+                }
+            }catch(e) {
+                alert("Server Error");
+            }
+        }
+
+        loadProfile();
+    </script>
+    
+</body>
+</html>

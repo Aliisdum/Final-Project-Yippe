@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uçuş Booking - Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logout {
+            background: #e74c3c;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout:hover {
+            background: #c0392b;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: rgba(0,0,0,0.05);
+            cursor: pointer;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            color: #333;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            background: rgba(44, 62, 80, 0.1);
+            border-color: #2c3e50;
+            transform: translateY(-2px);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border-color: #2c3e50;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            border-left: 5px solid #2c3e50;
+        }
+
+        .section h3 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f0f4f8;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #2c3e50;
+            box-shadow: 0 0 8px rgba(44, 62, 80, 0.2);
+        }
+
+        button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-top: 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
+        }
+
+        .delete-btn:hover {
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo"><i class="fas fa-plane"></i> Flight Booking Admin</div>
+        <button class="logout" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('flights')">Flights</button>
+            <button class="tab" onclick="showTab('planes')">Planes</button>
+            <button class="tab" onclick="showTab('bookings')">Bookings</button>
+            <button class="tab" onclick="showTab('payments')">Payments</button>
+            <button class="tab" onclick="showTab('statistics')">Statistics</button>
+        </div>
+
+        <!-- Flights Tab -->
+        <div id="flights" class="tab-content active">
+            <div class="section">
+                <h3><i class="fas fa-plus-circle"></i> Add New Flight</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Flight Number</label>
+                        <input type="text" id="flightNumber" placeholder="e.g., FB001" required>
+                    </div>
+                    <div class="form-group">
+                        <label>From</label>
+                        <input type="text" id="from" placeholder="e.g., Baku" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>To</label>
+                        <input type="text" id="to" placeholder="e.g., Istanbul" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Price</label>
+                        <input type="number" id="price" placeholder="e.g., 150.00" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Departure Time</label>
+                        <input type="datetime-local" id="departureTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Arrival Time</label>
+                        <input type="datetime-local" id="arrivalTime" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Plane</label>
+                        <select id="plane" required>
+                            <option value="">Select a plane</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="addFlight()"><i class="fas fa-save"></i> Add Flight</button>
+            </div>
+
+            <div class="section">
+                <h3><i class="fas fa-list"></i> All Flights</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Flight Number</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Departure</th>
+                            <th>Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="flightsList"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Planes Tab -->
+        <div id="planes" class="tab-content">
+            <div class="section">
+                <h3><i class="fas fa-helicopter"></i> Add New Plane</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Plane Name</label>
+                        <input type="text" id="planeName" placeholder="e.g., Boeing 747">
+                    </div>
+                    <div class="form-group">
+                        <label>Total Seats</label>
+                        <input type="number" id="totalSeats" placeholder="e.g., 350" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Business Seats</label>
+                        <input type="number" id="businessSeats" placeholder="e.g., 50" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Economy Seats</label>
+                        <input type="number" id="economySeats" placeholder="e.g., 300" min="0">
+                    </div>
+                    <div class="form-group" style="align-self: flex-end;">
+                        <button class="btn-add" onclick="addPlane()" style="background: #27ae60; padding: 12px 24px; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                            <i class="fas fa-plus"></i> Add Plane
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3><i class="fas fa-list"></i> All Planes</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Total Seats</th>
+                            <th>Business</th>
+                            <th>Economy</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="planesList"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Bookings Tab -->
+        <div id="bookings" class="tab-content">
+            <div class="section">
+                <h3><i class="fas fa-ticket-alt"></i> All Bookings</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>User</th>
+                            <th>Flight</th>
+                            <th>Passengers</th>
+                            <th>Total Price</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsList"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Payments Tab -->
+        <div id="payments" class="tab-content">
+            <div class="section">
+                <h3><i class="fas fa-credit-card"></i> All Payments</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Payment ID</th>
+                            <th>Booking ID</th>
+                            <th>Amount</th>
+                            <th>Method</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentsList"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Statistics Tab -->
+        <div id="statistics" class="tab-content">
+            <div class="stats" id="statsContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('accessToken');
+        const API_BASE = 'http://localhost:8080/api';
+
+        window.addEventListener('load', () => {
+            if (!token) {
+                window.location.href = 'login.html';
+            }
+            loadFlights();
+            loadBookings();
+            loadPayments();
+            loadPlanes();
+            loadStatistics();
+        });
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'statistics') loadStatistics();
+        }
+
+        async function loadPlanes() {
+            try {
+                const response = await fetch(`${API_BASE}/planes`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                const data = await response.json();
+                
+                // Populate dropdown in flights form
+                const select = document.getElementById('plane');
+                if (select && data.data && Array.isArray(data.data)) {
+                    // Clear existing options except the first one
+                    while (select.options.length > 1) {
+                        select.remove(1);
+                    }
+                    data.data.forEach(plane => {
+                        const option = document.createElement('option');
+                        option.value = plane.id;
+                        option.textContent = `${plane.name} (${plane.totalSeats} seats)`;
+                        select.appendChild(option);
+                    });
+                }
+                
+                // Populate planes table
+                const planesList = document.getElementById('planesList');
+                if (planesList && data.data && Array.isArray(data.data)) {
+                    planesList.innerHTML = '';
+                    data.data.forEach(plane => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${plane.id}</td>
+                            <td>${plane.name}</td>
+                            <td>${plane.totalSeats}</td>
+                            <td>${plane.totalBusinessSeats}</td>
+                            <td>${plane.totalEconomySeats}</td>
+                            <td>
+                                <button class="btn-delete" onclick="deletePlane(${plane.id})" style="background: #e74c3c; padding: 6px 12px; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        `;
+                        planesList.appendChild(row);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading planes:', error);
+            }
+        }
+
+        async function addPlane() {
+            const planeData = {
+                name: document.getElementById('planeName').value,
+                totalSeats: parseInt(document.getElementById('totalSeats').value),
+                totalBusinessSeats: parseInt(document.getElementById('businessSeats').value),
+                totalEconomySeats: parseInt(document.getElementById('economySeats').value)
+            };
+
+            if (!planeData.name || !planeData.totalSeats || planeData.totalBusinessSeats < 0 || planeData.totalEconomySeats < 0) {
+                alert('Please fill in all fields with valid values');
+                return;
+            }
+
+            if (planeData.totalBusinessSeats + planeData.totalEconomySeats > planeData.totalSeats) {
+                alert('Business + Economy seats cannot exceed Total seats');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/planes`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(planeData)
+                });
+
+                if (response.ok) {
+                    alert('Plane added successfully!');
+                    document.getElementById('planeName').value = '';
+                    document.getElementById('totalSeats').value = '';
+                    document.getElementById('businessSeats').value = '';
+                    document.getElementById('economySeats').value = '';
+                    loadPlanes();
+                } else {
+                    const errorMsg = await response.text();
+                    alert('Error: ' + errorMsg);
+                }
+            } catch (error) {
+                console.error('Error adding plane:', error);
+                alert('Error adding plane');
+            }
+        }
+
+        async function deletePlane(planeId) {
+            if (!confirm('Are you sure you want to delete this plane?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/planes/${planeId}`, {
+                    method: 'DELETE',
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+
+                if (response.ok) {
+                    alert('Plane deleted successfully!');
+                    loadPlanes();
+                } else {
+                    alert('Error deleting plane');
+                }
+            } catch (error) {
+                console.error('Error deleting plane:', error);
+                alert('Error deleting plane');
+            }
+        }
+
+        async function addFlight() {
+            const flightData = {
+                flightNumber: document.getElementById('flightNumber').value,
+                from: document.getElementById('from').value,
+                to: document.getElementById('to').value,
+                departureTime: document.getElementById('departureTime').value,
+                arrivalTime: document.getElementById('arrivalTime').value,
+                price: parseFloat(document.getElementById('price').value),
+                planeId: parseInt(document.getElementById('plane').value)
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/flights`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(flightData)
+                });
+
+                if (response.ok) {
+                    alert('Flight added successfully!');
+                    document.getElementById('flightNumber').value = '';
+                    document.getElementById('from').value = '';
+                    document.getElementById('to').value = '';
+                    document.getElementById('price').value = '';
+                    document.getElementById('departureTime').value = '';
+                    document.getElementById('arrivalTime').value = '';
+                    loadFlights();
+                } else {
+                    alert('Error adding flight');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function loadFlights() {
+            try {
+                const response = await fetch(`${API_BASE}/flights`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                const data = await response.json();
+                const tbody = document.getElementById('flightsList');
+                tbody.innerHTML = '';
+
+                if (data.data && Array.isArray(data.data)) {
+                    data.data.forEach(flight => {
+                        const row = tbody.insertRow();
+                        row.innerHTML = `
+                            <td>${flight.flightNumber}</td>
+                            <td>${flight.from}</td>
+                            <td>${flight.to}</td>
+                            <td>${new Date(flight.departureTime).toLocaleString()}</td>
+                            <td>$${flight.price.toFixed(2)}</td>
+                            <td><button class="delete-btn" onclick="deleteFlight(${flight.id})">Delete</button></td>
+                        `;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading flights:', error);
+            }
+        }
+
+        async function deleteFlight(id) {
+            if (!confirm('Are you sure?')) return;
+            try {
+                await fetch(`${API_BASE}/flights/${id}`, {
+                    method: 'DELETE',
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                loadFlights();
+            } catch (error) {
+                console.error('Error deleting flight:', error);
+            }
+        }
+
+        async function loadBookings() {
+            try {
+                const response = await fetch(`${API_BASE}/bookings`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                const data = await response.json();
+                const tbody = document.getElementById('bookingsList');
+                tbody.innerHTML = '';
+
+                if (data.data && Array.isArray(data.data)) {
+                    data.data.forEach(booking => {
+                        const row = tbody.insertRow();
+                        row.innerHTML = `
+                            <td>#${booking.id}</td>
+                            <td>${booking.user ? booking.user.fullName : 'Unknown'}</td>
+                            <td>${booking.flight ? booking.flight.flightNumber : 'N/A'}</td>
+                            <td>${booking.numOfPassengers || 0}</td>
+                            <td>$${booking.totalPrice ? booking.totalPrice.toFixed(2) : '0.00'}</td>
+                            <td>${booking.bookingStatus || 'PENDING'}</td>
+                        `;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+            }
+        }
+
+        async function loadPayments() {
+            try {
+                const response = await fetch(`${API_BASE}/payments`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                const data = await response.json();
+                const tbody = document.getElementById('paymentsList');
+                tbody.innerHTML = '';
+
+                if (data.data && Array.isArray(data.data)) {
+                    data.data.forEach(payment => {
+                        const row = tbody.insertRow();
+                        row.innerHTML = `
+                            <td>#${payment.id}</td>
+                            <td>#${payment.booking ? payment.booking.id : 'N/A'}</td>
+                            <td>$${payment.amount ? payment.amount.toFixed(2) : '0.00'}</td>
+                            <td>${payment.paymentMethod || 'N/A'}</td>
+                            <td>${payment.paymentStatus || 'PENDING'}</td>
+                            <td>${new Date(payment.paymentDate).toLocaleDateString()}</td>
+                        `;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading payments:', error);
+            }
+        }
+
+        async function loadStatistics() {
+            try {
+                const flightsRes = await fetch(`${API_BASE}/flights`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                const bookingsRes = await fetch(`${API_BASE}/bookings`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+                const paymentsRes = await fetch(`${API_BASE}/payments`, {
+                    headers: {'Authorization': `Bearer ${token}`}
+                });
+
+                const flights = await flightsRes.json();
+                const bookings = await bookingsRes.json();
+                const payments = await paymentsRes.json();
+
+                const container = document.getElementById('statsContainer');
+                container.innerHTML = `
+                    <div class="stat-card">
+                        <h4>Total Flights</h4>
+                        <div class="number">${flights.data ? flights.data.length : 0}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Total Bookings</h4>
+                        <div class="number">${bookings.data ? bookings.data.length : 0}</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Total Payments</h4>
+                        <div class="number">$${payments.data ? payments.data.reduce((sum, p) => sum + (p.amount || 0), 0).toFixed(2) : '0.00'}</div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('username');
+            localStorage.removeItem('role');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

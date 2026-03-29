@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uçuş Booking - Qeydiyyat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .register-box {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            margin: 20px;
+        }
+
+        .register-box h1 {
+            margin-top: 0;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-size: 28px;
+            text-align: center;
+        }
+
+        .register-box input {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .register-box input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
+        }
+
+        .register-box button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .register-box button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .register-box a {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            text-decoration: none;
+            color: #3498db;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .register-box a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        #result {
+            margin-top: 15px;
+            font-size: 14px;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        #result.error {
+            background-color: #fadbd8;
+            color: #c0392b;
+            border: 2px solid #c0392b;
+        }
+
+        #result.success {
+            background-color: #d5f4e6;
+            color: #27ae60;
+            border: 2px solid #27ae60;
+        }
+
+        .terms {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin: 15px 0;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="register-box">
+        <h1><i class="fas fa-user-plus"></i> Qeydiyyat</h1>
+
+        <input type="text" id="fullName" placeholder="Ad Soyad" required>
+        <input type="email" id="email" placeholder="E-mail" required>
+        <input type="text" id="username" placeholder="İstifadəçi adı" required>
+        <input type="password" id="password" placeholder="Şifrə" required>
+        <input type="password" id="confirmPassword" placeholder="Şifrəni Təsdiq Edin" required>
+
+        <div class="terms">
+            <input type="checkbox" id="agreeTerms" required>
+            <label for="agreeTerms">Şərtlərə və Qanunlara Ramı Oldum</label>
+        </div>
+
+        <button onclick="register()">Qeydiyyatdan Keç</button>
+        <a href="login.html">Artıq qeydiyyatdan keçdinizmi? Giriş edin</a>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function register() {
+            const fullName = document.getElementById("fullName").value;
+            const email = document.getElementById("email").value;
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            const agreeTerms = document.getElementById("agreeTerms").checked;
+
+            if (!fullName || !email || !username || !password || !confirmPassword) {
+                showResult("Bütün sahələri doldurun", "error");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showResult("Şifrələr uyğun gəlmir", "error");
+                return;
+            }
+
+            if (password.length < 6) {
+                showResult("Şifrə ən azı 6 simvol uzunluğunda olmalıdır", "error");
+                return;
+            }
+
+            if (!agreeTerms) {
+                showResult("Şərtləri qəbul etməlisiniz", "error");
+                return;
+            }
+
+            const request = {
+                fullName: fullName,
+                email: email,
+                username: username,
+                password: password
+            };
+
+            try {
+                const response = await fetch("http://localhost:8080/api/auth/register", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(request)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showResult("Qeydiyyat uğurlu oldu! Giriş səhifəsinə yönləndirilirsiniz...", "success");
+                    setTimeout(() => {
+                        window.location.href = "login.html";
+                    }, 2000);
+                } else {
+                    showResult(data.message || "Qeydiyyat uğursuz oldu", "error");
+                }
+            } catch (error) {
+                console.error("Xəta:", error);
+                showResult("Qeydiyyat zamanı xəta baş verdi", "error");
+            }
+        }
+
+        function showResult(message, type) {
+            const resultDiv = document.getElementById("result");
+            resultDiv.className = type;
+            resultDiv.innerText = message;
+        }
+    </script>
+
+</body>
+</html>

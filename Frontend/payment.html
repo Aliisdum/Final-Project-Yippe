@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uçuş Booking - Ödəniş</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        .container {
+            padding: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .payment-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 30px;
+        }
+
+        .payment-container h2 {
+            margin-bottom: 30px;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 15px;
+        }
+
+        .booking-summary {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .booking-summary h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #bdc3c7;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: #555;
+            font-weight: 500;
+        }
+
+        .summary-value {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #3498db;
+            color: #27ae60;
+        }
+
+        .payment-form {
+            margin-top: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
+        }
+
+        .card-details {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+        }
+
+        .card-details .form-group {
+            margin-bottom: 15px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: 0.3s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+
+        .submit-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .message.error {
+            background-color: #fadbd8;
+            color: #c0392b;
+            border-left: 4px solid #c0392b;
+        }
+
+        .message.success {
+            background-color: #d5f4e6;
+            color: #27ae60;
+            border-left: 4px solid #27ae60;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #7f8c8d;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .security-info {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .security-info i {
+            color: #27ae60;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo"><i class="fas fa-credit-card"></i> Uçuş Booking - Ödəniş</div>
+        <button class="logout-btn" onclick="logout()">Çıxış</button>
+    </div>
+
+    <div class="container">
+        <div class="payment-container">
+            <h2><i class="fas fa-money-bill-wave"></i> Ödəniş Məlumatları</h2>
+
+            <!-- Booking Summary -->
+            <div class="booking-summary" id="bookingSummary">
+                <h3>Sifariş Xülasəsi</h3>
+                <div class="summary-row">
+                    <span class="summary-label">Sifariş ID:</span>
+                    <span class="summary-value" id="bookingId">-</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Uçuş Rəqəmi:</span>
+                    <span class="summary-value" id="flightNumber">-</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Marşrut:</span>
+                    <span class="summary-value" id="route">-</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Yolcu Sayı:</span>
+                    <span class="summary-value" id="passengers">-</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Oturacaq Sinfi:</span>
+                    <span class="summary-value" id="seatClass">-</span>
+                </div>
+                <div class="total-row">
+                    <span>Cəmi Məbləğ:</span>
+                    <span id="totalAmount">₼0.00</span>
+                </div>
+            </div>
+
+            <!-- Payment Form -->
+            <form class="payment-form" onsubmit="processPayment(event)">
+                <div class="form-group">
+                    <label>Ödəniş Metodu</label>
+                    <select id="paymentMethod" required>
+                        <option value="">Seçin...</option>
+                        <option value="CREDIT_CARD">Kredit Kartı</option>
+                        <option value="DEBIT_CARD">Debit Kartı</option>
+                        <option value="BANK_TRANSFER">Bank Transferi</option>
+                    </select>
+                </div>
+
+                <div id="cardSection" style="display:none;">
+                    <div class="form-group">
+                        <label>Kart Sahibinin Adı</label>
+                        <input type="text" id="cardholderName" placeholder="Kart sahibinin adı və soyadı">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Kart Nömrəsi</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                    </div>
+
+                    <div class="card-details">
+                        <div class="form-group">
+                            <label>Son Kullanma Tarihi (MM/YY)</label>
+                            <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5">
+                        </div>
+                        <div class="form-group">
+                            <label>CVV</label>
+                            <input type="text" id="cvv" placeholder="123" maxlength="4">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="bankSection" style="display:none;">
+                    <div class="form-group">
+                        <label>Bank Adı</label>
+                        <input type="text" id="bankName" placeholder="Bank adını daxil edin">
+                    </div>
+                    <div class="form-group">
+                        <label>Hesab Nömrəsi</label>
+                        <input type="text" id="accountNumber" placeholder="Hesab nömrəsini daxil edin">
+                    </div>
+                </div>
+
+                <div class="security-info">
+                    <i class="fas fa-lock"></i> Sizin ödəniş məlumatlarınız 256-bit SSL şifrələməsi ilə qorunur
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-check-circle"></i> Ödəişi Tamamla
+                </button>
+            </form>
+
+            <div id="message"></div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Ödəniş işlənir...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let bookingId = null;
+
+        window.onload = () => {
+            const token = localStorage.getItem("accessToken");
+            if (!token) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            // Get booking ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            bookingId = urlParams.get('bookingId');
+
+            if (!bookingId) {
+                showMessage("Sifariş ID tapılmadı", "error");
+                return;
+            }
+
+            loadBookingDetails();
+        };
+
+        async function loadBookingDetails() {
+            try {
+                const token = localStorage.getItem("accessToken");
+                const response = await fetch(`http://localhost:8080/api/bookings/${bookingId}`, {
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error("Sifariş məlumatları yükləmə uğursuz");
+                }
+
+                const data = await response.json();
+
+                if (data.success && data.data) {
+                    const booking = data.data;
+                    document.getElementById("bookingId").innerText = booking.id;
+                    document.getElementById("flightNumber").innerText = booking.flight.flightNumber;
+                    document.getElementById("route").innerText = booking.flight.origin + " → " + booking.flight.destination;
+                    document.getElementById("passengers").innerText = booking.passengerCount;
+                    document.getElementById("seatClass").innerText = booking.seatClass;
+                    document.getElementById("totalAmount").innerText = "₼" + parseFloat(booking.totalPrice).toFixed(2);
+                } else {
+                    showMessage("Sifariş məlumatları yükləmə uğursuz", "error");
+                }
+            } catch (error) {
+                console.error("Xəta:", error);
+                showMessage("Sifariş məlumatları yükləmə zamanı xəta baş verdi", "error");
+            }
+        }
+
+        document.getElementById("paymentMethod").addEventListener("change", (e) => {
+            document.getElementById("cardSection").style.display = e.target.value === "CREDIT_CARD" || e.target.value === "DEBIT_CARD" ? "block" : "none";
+            document.getElementById("bankSection").style.display = e.target.value === "BANK_TRANSFER" ? "block" : "none";
+        });
+
+        async function processPayment(event) {
+            event.preventDefault();
+
+            const paymentMethod = document.getElementById("paymentMethod").value;
+
+            if (!paymentMethod) {
+                showMessage("Ödəniş metodunu seçin", "error");
+                return;
+            }
+
+            // Validate card details if card payment
+            if (paymentMethod === "CREDIT_CARD" || paymentMethod === "DEBIT_CARD") {
+                if (!document.getElementById("cardholderName").value || 
+                    !document.getElementById("cardNumber").value ||
+                    !document.getElementById("expiryDate").value ||
+                    !document.getElementById("cvv").value) {
+                    showMessage("Bütün kart məlumatlarını doldurun", "error");
+                    return;
+                }
+            }
+
+            document.getElementById("loading").style.display = "block";
+            document.querySelector(".submit-btn").disabled = true;
+
+            try {
+                const token = localStorage.getItem("accessToken");
+                
+                const paymentRequest = {
+                    bookingId: bookingId,
+                    paymentMethod: paymentMethod,
+                    amount: document.getElementById("totalAmount").innerText.replace("₼", ""),
+                    success: true,
+                    transactionId: "TXN-" + Date.now()
+                };
+
+                const response = await fetch(`http://localhost:8080/api/payments/bookings/${bookingId}/pay`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + token
+                    },
+                    body: JSON.stringify(paymentRequest)
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showMessage("Ödəniş uğurlu oldu!", "success");
+                    setTimeout(() => {
+                        window.location.href = "customerProfile.html";
+                    }, 2000);
+                } else {
+                    showMessage(data.message || "Ödəniş uğursuz oldu", "error");
+                }
+            } catch (error) {
+                console.error("Xəta:", error);
+                showMessage("Ödəniş zamanı xəta baş verdi", "error");
+            } finally {
+                document.getElementById("loading").style.display = "none";
+                document.querySelector(".submit-btn").disabled = false;
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById("message");
+            messageDiv.className = "message " + type;
+            messageDiv.innerHTML = `<i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i> ${message}`;
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "login.html";
+        }
+
+        // Format card number
+        document.getElementById("cardNumber").addEventListener("input", (e) => {
+            e.target.value = e.target.value.replace(/\s/g, '').replace(/(\d{4})/g, '$1 ').trim();
+        });
+
+        // Format expiry date
+        document.getElementById("expiryDate").addEventListener("input", (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        // Only numbers for CVV
+        document.getElementById("cvv").addEventListener("input", (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+    </script>
+
+</body>
+</html>
