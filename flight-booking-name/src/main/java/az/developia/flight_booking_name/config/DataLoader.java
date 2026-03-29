@@ -1,9 +1,12 @@
 package az.developia.flight_booking_name.config;
 
 import az.developia.flight_booking_name.entity.Plane;
+import az.developia.flight_booking_name.entity.Seat;
+import az.developia.flight_booking_name.entity.SeatClass;
 import az.developia.flight_booking_name.entity.User;
 import az.developia.flight_booking_name.entity.UserRole;
 import az.developia.flight_booking_name.repository.PlaneRepository;
+import az.developia.flight_booking_name.repository.SeatRepository;
 import az.developia.flight_booking_name.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -17,6 +20,7 @@ public class DataLoader {
 
     private UserRepository userRepository;
     private PlaneRepository planeRepository;
+    private SeatRepository seatRepository;
     private PasswordEncoder passwordEncoder;
 
     @Bean
@@ -77,6 +81,7 @@ public class DataLoader {
                         .totalEconomySeats(159)
                         .build();
                 planeRepository.save(plane1);
+                createSeats(plane1, 30, 159);
 
                 // Airbus A320
                 Plane plane2 = Plane.builder()
@@ -86,6 +91,7 @@ public class DataLoader {
                         .totalEconomySeats(155)
                         .build();
                 planeRepository.save(plane2);
+                createSeats(plane2, 25, 155);
 
                 // Boeing 777
                 Plane plane3 = Plane.builder()
@@ -95,6 +101,7 @@ public class DataLoader {
                         .totalEconomySeats(290)
                         .build();
                 planeRepository.save(plane3);
+                createSeats(plane3, 60, 290);
 
                 // Airbus A380
                 Plane plane4 = Plane.builder()
@@ -104,9 +111,33 @@ public class DataLoader {
                         .totalEconomySeats(475)
                         .build();
                 planeRepository.save(plane4);
+                createSeats(plane4, 80, 475);
 
                 System.out.println("✓ Sample planes created: Boeing 737, Airbus A320, Boeing 777, Airbus A380");
             }
         };
     }
+
+    private void createSeats(Plane plane, int businessSeats, int economySeats) {
+        // Create business seats
+        for (int i = 1; i <= businessSeats; i++) {
+            String seatNumber = i + "A";
+            Seat seat = Seat.builder()
+                    .seatNumber(seatNumber)
+                    .seatClass(SeatClass.BUSINESS)
+                    .plane(plane)
+                    .build();
+            seatRepository.save(seat);
+        }
+
+        // Create economy seats
+        for (int i = 1; i <= economySeats; i++) {
+            String seatNumber = i + "B";
+            Seat seat = Seat.builder()
+                    .seatNumber(seatNumber)
+                    .seatClass(SeatClass.ECONOMY)
+                    .plane(plane)
+                    .build();
+            seatRepository.save(seat);
+        }
 }

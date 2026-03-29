@@ -260,12 +260,12 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>To</label>
-                        <input type="text" id="to" placeholder="e.g., Istanbul" required>
+                        <label>Price (Economy)</label>
+                        <input type="number" id="price" placeholder="e.g., 150.00" required>
                     </div>
                     <div class="form-group">
-                        <label>Price</label>
-                        <input type="number" id="price" placeholder="e.g., 150.00" required>
+                        <label>Business Price</label>
+                        <input type="number" id="businessPrice" placeholder="e.g., 350.00" required>
                     </div>
                 </div>
 
@@ -546,8 +546,8 @@
         async function addFlight() {
             const flightData = {
                 flightNumber: document.getElementById('flightNumber').value,
-                from: document.getElementById('from').value,
-                to: document.getElementById('to').value,
+                origin: document.getElementById('from').value,
+                destination: document.getElementById('to').value,
                 departureTime: document.getElementById('departureTime').value,
                 arrivalTime: document.getElementById('arrivalTime').value,
                 price: parseFloat(document.getElementById('price').value),
@@ -574,7 +574,8 @@
                     document.getElementById('arrivalTime').value = '';
                     loadFlights();
                 } else {
-                    alert('Error adding flight');
+                    const errorData = await response.json();
+                    alert('Error adding flight: ' + (errorData.message || response.statusText));
                 }
             } catch (error) {
                 alert('Error: ' + error.message);
@@ -590,19 +591,24 @@
                 const tbody = document.getElementById('flightsList');
                 tbody.innerHTML = '';
 
+                let flights = [];
                 if (data.data && Array.isArray(data.data)) {
-                    data.data.forEach(flight => {
-                        const row = tbody.insertRow();
-                        row.innerHTML = `
-                            <td>${flight.flightNumber}</td>
-                            <td>${flight.from}</td>
-                            <td>${flight.to}</td>
-                            <td>${new Date(flight.departureTime).toLocaleString()}</td>
-                            <td>$${flight.price.toFixed(2)}</td>
-                            <td><button class="delete-btn" onclick="deleteFlight(${flight.id})">Delete</button></td>
-                        `;
-                    });
+                    flights = data.data;
+                } else if (data.data && data.data.content && Array.isArray(data.data.content)) {
+                    flights = data.data.content;
                 }
+
+                flights.forEach(flight => {
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${flight.flightNumber}</td>
+                        <td>${flight.origin}</td>
+                        <td>${flight.destination}</td>
+                        <td>${new Date(flight.departureTime).toLocaleString()}</td>
+                        <td>$${flight.price.toFixed(2)}</td>
+                        <td><button class="delete-btn" onclick="deleteFlight(${flight.id})">Delete</button></td>
+                    `;
+                });
             } catch (error) {
                 console.error('Error loading flights:', error);
             }

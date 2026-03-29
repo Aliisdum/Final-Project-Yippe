@@ -520,20 +520,27 @@
         }
 
         async function confirmBooking() {
-            if (!selectedFlight) return;
+            if (!selectedFlight) {
+                alert('No flight selected');
+                return;
+            }
 
-            const passengerCount = parseInt(document.getElementById("passengerCount").value);
-            const seatClass = document.getElementById("seatClass").value;
+            const passengerName = document.getElementById("passengerName").value || "Passenger";
             const token = localStorage.getItem("accessToken");
+
+            if (!passengerName || passengerName.trim() === "") {
+                alert("Please enter passenger name");
+                return;
+            }
 
             const bookingRequest = {
                 flightId: selectedFlight.id,
-                passengerCount: passengerCount,
-                seatClass: seatClass
+                seatId: 1,
+                passengerName: passengerName
             };
 
             try {
-                const response = await fetch("http://localhost:8080/api/bookings", {
+                const response = await fetch(`http://localhost:8080/api/bookings`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -541,6 +548,20 @@
                     },
                     body: JSON.stringify(bookingRequest)
                 });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    alert("Booking created successfully!");
+                    closeBookingModal();
+                    loadMyBookings();
+                } else {
+                    alert("Error: " + (data.message || "Booking failed"));
+                }
+            } catch (error) {
+                alert("Error: " + error.message);
+            }
+        }
 
                 const data = await response.json();
 

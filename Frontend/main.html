@@ -520,16 +520,23 @@
         }
 
         async function confirmBooking() {
-            if (!selectedFlight) return;
+            if (!selectedFlight) {
+                alert('No flight selected');
+                return;
+            }
 
-            const passengerCount = parseInt(document.getElementById("passengerCount").value);
-            const seatClass = document.getElementById("seatClass").value;
+            const passengerName = document.getElementById("passengerName").value || "Passenger";
             const token = localStorage.getItem("accessToken");
+
+            if (!passengerName || passengerName.trim() === "") {
+                alert("Please enter passenger name");
+                return;
+            }
 
             const bookingRequest = {
                 flightId: selectedFlight.id,
-                passengerCount: passengerCount,
-                seatClass: seatClass
+                seatId: 1,
+                passengerName: passengerName
             };
 
             try {
