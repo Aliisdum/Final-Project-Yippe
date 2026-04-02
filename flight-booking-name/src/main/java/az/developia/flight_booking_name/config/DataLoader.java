@@ -140,4 +140,5 @@ public class DataLoader {
                     .build();
             seatRepository.save(seat);
         }
+    }
 }
