@@ -43,6 +43,9 @@ public class User {
     @Column(name = "airline_id")
     private Long airlineId;
 
+    @Column(name = "profile_picture_url")
+    private String profilePictureUrl;
+
     @Builder.Default
     @Column(nullable = false)
     private Boolean enabled = true;

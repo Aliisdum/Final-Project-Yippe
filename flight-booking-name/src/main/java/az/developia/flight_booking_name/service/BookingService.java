@@ -112,6 +112,11 @@ public class BookingService {
         return new PageImpl<>(responses, pageable, bookings.getTotalElements());
     }
 
+    public BookingResponse getBookingResponseById(Long id) {
+        Booking booking = getBookingById(id);
+        return mapToBookingResponse(booking);
+    }
+
     private BookingResponse mapToBookingResponse(Booking booking) {
         UserResponse customerResponse = UserResponse.builder()
                 .id(booking.getCustomer().getId())

@@ -5,6 +5,7 @@ import az.developia.flight_booking_name.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -88,6 +89,18 @@ public class GlobalExceptionHandler {
                 .statusCode(HttpStatus.FORBIDDEN.value())
                 .build();
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ResponseEntity<ApiResponse<?>> handleAuthenticationException(
+            AuthenticationException ex, WebRequest request) {
+        ApiResponse<?> response = ApiResponse.builder()
+                .success(false)
+                .message("Unauthorized: " + ex.getMessage())
+                .statusCode(HttpStatus.UNAUTHORIZED.value())
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

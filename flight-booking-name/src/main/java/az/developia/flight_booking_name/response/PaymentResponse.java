@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class PaymentResponse {
     private Long id;
+    private Long bookingId;
     private BigDecimal amount;
     private String status;
     private String transactionId;

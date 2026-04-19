@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/payments")
 @AllArgsConstructor
@@ -52,6 +54,19 @@ public class PaymentController {
                 .success(true)
                 .message("Payment retrieved successfully")
                 .data(response)
+                .statusCode(HttpStatus.OK.value())
+                .build());
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get all payments", description = "Get all payments (Admin only)")
+    public ResponseEntity<ApiResponse<List<PaymentResponse>>> getAllPayments() {
+        var responses = paymentService.getAllPayments();
+        return ResponseEntity.ok(ApiResponse.<List<PaymentResponse>>builder()
+                .success(true)
+                .message("Payments retrieved successfully")
+                .data(responses)
                 .statusCode(HttpStatus.OK.value())
                 .build());
     }

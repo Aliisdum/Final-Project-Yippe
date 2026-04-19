@@ -20,13 +20,13 @@
 
         /* HEADER */
         .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, #d9001b 0%, #a80016 100%);
             color: white;
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.14);
         }
 
         .logo {
@@ -34,7 +34,23 @@
             font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+        }
+
+        .brand-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-mark svg {
+            width: 24px;
+            height: 24px;
+            fill: #d9001b;
         }
 
         .user-menu {
@@ -58,7 +74,7 @@
         }
 
         .logout-btn {
-            background: #e74c3c;
+            background: #d9001b;
             padding: 8px 15px;
             border: none;
             border-radius: 5px;
@@ -69,7 +85,7 @@
         }
 
         .logout-btn:hover {
-            background: #c0392b;
+            background: #b30016;
         }
 
         /* CONTAINER */
@@ -87,7 +103,7 @@
 
         .search-section h2 {
             margin-bottom: 20px;
-            color: #2c3e50;
+            color: #a80016;
         }
 
         .search-form {
@@ -109,12 +125,12 @@
         .search-form input:focus,
         .search-form select:focus {
             outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
+            border-color: #d9001b;
+            box-shadow: 0 0 8px rgba(217, 0, 27, 0.2);
         }
 
         .search-btn {
-            background: #3498db;
+            background: #d9001b;
             color: white;
             padding: 12px 30px;
             border: none;
@@ -126,9 +142,9 @@
         }
 
         .search-btn:hover {
-            background: #2980b9;
+            background: #b30016;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+            box-shadow: 0 4px 12px rgba(217, 0, 27, 0.3);
         }
 
         /* FLIGHTS LIST */
@@ -305,7 +321,10 @@
 
     <div class="header">
         <div class="logo">
-            <i class="fas fa-plane"></i> Uçuş Booking
+            <div class="brand-mark">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C7.58 2 4 5.58 4 10C4 15.25 12 22 12 22C12 22 20 15.25 20 10C20 5.58 16.42 2 12 2Z"/><path d="M12 5.5L14.5 10H9.5L12 5.5Z" fill="#d9001b"/></svg>
+            </div>
+            Turkish Airlines
         </div>
         <div class="user-menu">
             <span id="username"></span>
@@ -358,7 +377,6 @@
                 <select id="seatClass" style="width:100%; padding:10px; margin:10px 0; border:1px solid #ddd; border-radius:4px;">
                     <option value="ECONOMY">Ekonom</option>
                     <option value="BUSINESS">Biznes</option>
-                    <option value="FIRST">Birinci Sinif</option>
                 </select>
             </div>
             <div style="display:flex; gap:10px;">
@@ -492,7 +510,7 @@
             }
 
             const html = flights.map(flight => `
-                <div class="flight-card" onclick="selectFlight(${flight.id}, '${flight.flightNumber}', '${flight.origin}', '${flight.destination}', '${flight.departureTime}', '${flight.price}')">
+                <div class="flight-card" onclick="selectFlight(${flight.id})">
                     <div class="flight-header">
                         <div class="flight-time">${flight.flightNumber}</div>
                         <div class="flight-price">₼${parseFloat(flight.price).toFixed(2)}</div>
@@ -530,19 +548,18 @@
             console.log("✅ Flights displayed successfully");
         }
 
-        function selectFlight(id, flightNumber, origin, destination, departureTime, price) {
-            selectedFlight = {
-                id: id,
-                flightNumber: flightNumber,
-                origin: origin,
-                destination: destination,
-                departureTime: departureTime,
-                price: price
-            };
+        function selectFlight(id) {
+            const flight = allFlights.find(f => f.id === id);
+            if (!flight) {
+                console.error('Flight not found for id:', id);
+                return;
+            }
+
+            selectedFlight = flight;
             
             document.getElementById("bookingFlightInfo").innerHTML = `
-                <strong>${flightNumber}</strong> - ${origin} → ${destination} (₼${price})<br>
-                <small>Hareket: ${new Date(departureTime).toLocaleString('az-AZ')}</small>
+                <strong>${flight.flightNumber}</strong> - ${flight.origin} → ${flight.destination} (₼${parseFloat(flight.price).toFixed(2)})<br>
+                <small>Hareket: ${new Date(flight.departureTime).toLocaleString('az-AZ')}</small>
             `;
             
             document.getElementById("bookingModal").style.display = "flex";
@@ -559,7 +576,8 @@
                 return;
             }
 
-            const passengerName = document.getElementById("passengerName").value || "Passenger";
+            const seatClass = document.getElementById("seatClass").value;
+            const passengerName = localStorage.getItem("username") || "Passenger";
             const token = localStorage.getItem("accessToken");
 
             if (!passengerName || passengerName.trim() === "") {
@@ -567,9 +585,18 @@
                 return;
             }
 
+            const availableSeat = selectedFlight.plane?.seats?.find(seat => {
+                return seat.seatClass === seatClass && seat.status === 'AVAILABLE';
+            });
+
+            if (!availableSeat) {
+                alert("Seçilən sinifdə mövcud boş yer tapılmadı. Başqa sinif seçin.");
+                return;
+            }
+
             const bookingRequest = {
                 flightId: selectedFlight.id,
-                seatId: 1,
+                seatId: availableSeat.id,
                 passengerName: passengerName
             };
 
@@ -588,29 +615,12 @@
                 if (response.ok && data.success) {
                     alert("Booking created successfully!");
                     closeBookingModal();
-                    loadMyBookings();
+                    window.location.href = "payment.html?bookingId=" + data.data.id;
                 } else {
                     alert("Error: " + (data.message || "Booking failed"));
                 }
             } catch (error) {
                 alert("Error: " + error.message);
-            }
-        }
-
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    showMessage("Sifariş uğurla yaradıldı!", "success");
-                    closeBookingModal();
-                    setTimeout(() => {
-                        window.location.href = "payment.html?bookingId=" + data.data.id;
-                    }, 1000);
-                } else {
-                    showMessage(data.message || "Sifariş yaratmada xəta baş verdi", "error");
-                }
-            } catch (error) {
-                console.error("Xəta:", error);
-                showMessage("Sifariş yaratırkən xəta baş verdi", "error");
             }
         }
 
@@ -656,16 +666,6 @@
                 closeBookingModal();
             }
         });
-    </script>
-
-</body>
-</html>
-
-        loadCategories();
-
-        function goToProfile() {
-            window.location.href = "customerProfile.html";
-        }
     </script>
 
 </body>

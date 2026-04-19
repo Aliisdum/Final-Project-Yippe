@@ -1,10 +1,12 @@
 package az.developia.flight_booking_name.controller;
 
+import az.developia.flight_booking_name.exception.UnauthorizedException;
 import az.developia.flight_booking_name.request.CreateBookingRequest;
 import az.developia.flight_booking_name.response.ApiResponse;
 import az.developia.flight_booking_name.response.ApiResponse.PaginationInfo;
 import az.developia.flight_booking_name.response.BookingResponse;
 import az.developia.flight_booking_name.service.BookingService;
+import az.developia.flight_booking_name.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,10 +30,14 @@ import org.springframework.web.bind.annotation.*;
 public class BookingController {
 
     private BookingService bookingService;
+    private UserService userService;
 
     private Long getCustomerId() {
-        // This should be replaced with actual user ID from token
-        return 1L;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getName() == null) {
+            throw new UnauthorizedException("User not authenticated");
+        }
+        return userService.getUserByUsername(authentication.getName()).getId();
     }
 
     @PostMapping
@@ -39,11 +47,7 @@ public class BookingController {
             @Valid @RequestBody CreateBookingRequest request) {
         Long customerId = getCustomerId();
         var booking = bookingService.createBooking(request, customerId);
-        var bookingPage = bookingService.getMyBookings(customerId, PageRequest.of(0, 1));
-        var response = bookingPage.getContent().stream()
-                .filter(b -> b.getId().equals(booking.getId()))
-                .findFirst()
-                .orElse(null);
+        var response = bookingService.getBookingResponseById(booking.getId());
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.<BookingResponse>builder()
@@ -58,12 +62,7 @@ public class BookingController {
     @PreAuthorize("hasRole('CUSTOMER') or hasRole('ADMIN')")
     @Operation(summary = "Get booking details", description = "Get detailed information about a booking")
     public ResponseEntity<ApiResponse<BookingResponse>> getBookingById(@PathVariable Long id) {
-        var booking = bookingService.getBookingById(id);
-        var bookingPage = bookingService.getAllBookings(PageRequest.of(0, 1));
-        var response = bookingPage.getContent().stream()
-                .filter(b -> b.getId().equals(booking.getId()))
-                .findFirst()
-                .orElse(null);
+        var response = bookingService.getBookingResponseById(id);
 
         return ResponseEntity.ok(ApiResponse.<BookingResponse>builder()
                 .success(true)

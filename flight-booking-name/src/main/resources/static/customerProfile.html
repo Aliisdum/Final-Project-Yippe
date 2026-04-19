@@ -15,16 +15,45 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f5f7fa;
     color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .header {
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    background: linear-gradient(135deg, #d9001b 0%, #a80016 100%);
     color: white;
     padding: 15px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.14);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.brand-mark {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.brand-mark svg {
+    width: 24px;
+    height: 24px;
 }
 
 .header h2 {
@@ -43,39 +72,46 @@ body {
 
 /* ===== CONTAINER ===== */
 .container {
-    max-width: 420px;
-    margin: 40px auto;
+    width: calc(100% - 32px);
+    max-width: 540px;
+    margin: 28px auto 40px;
     background: #fff;
-    padding: 25px;
-    border-radius: 14px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    padding: 28px;
+    border-radius: 18px;
+    box-shadow: 0 18px 48px rgba(0,0,0,0.08);
 }
 
 /* ===== PROFILE IMAGE ===== */
 .profile-wrapper {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    padding: 24px 0 12px;
+    border-bottom: 1px solid #eee;
 }
 
 .profile-pic {
-    width: 130px;
-    height: 130px;
+    width: 140px;
+    height: 140px;
     border-radius: 50%;
     object-fit: cover;
-    border: 4px solid #1976d2;
+    border: 4px solid white;
     background: #eee;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.12);
 }
 
 /* ===== FILE INPUT ===== */
 input[type="file"] {
-    margin-top: 15px;
+    display: block;
+    margin: 0 auto;
+    padding: 8px 0;
+    cursor: pointer;
 }
 
 /* ===== BUTTONS ===== */
 button {
     width: 100%;
     padding: 11px;
-    margin-top: 10px;
+    margin-top: 0;
     border: none;
     border-radius: 8px;
     font-size: 14px;
@@ -83,22 +119,28 @@ button {
     transition: 0.2s;
 }
 
+.button-group {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+}
+
 .upload-btn {
-    background: #1976d2;
+    background: #d9001b;
     color: white;
 }
 
 .upload-btn:hover {
-    background: #1259a8;
+    background: #b30016;
 }
 
 .delete-btn {
-    background: #e53935;
+    background: #990014;
     color: white;
 }
 
 .delete-btn:hover {
-    background: #c62828;
+    background: #7a000f;
 }
 
 .edit-btn {
@@ -112,12 +154,32 @@ button {
 }
 
 /* ===== PROFILE INFO ===== */
+.profile-card {
+    background: #fafafa;
+    border-radius: 14px;
+    padding: 18px 18px 14px;
+    border: 1px solid #ececec;
+    margin-top: 20px;
+}
+
+.profile-card h3 {
+    margin: 0 0 14px;
+    color: #a80016;
+    font-size: 18px;
+    letter-spacing: 0.02em;
+}
+
 .profile-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    align-items: center;
+    padding: 10px 0;
     border-bottom: 1px solid #eee;
     font-size: 14px;
+}
+
+.profile-item:last-child {
+    border-bottom: none;
 }
 
 .profile-item label {
@@ -131,10 +193,26 @@ button {
 
 /* ===== RESULT ===== */
 #result {
+    display: none;
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     font-size: 14px;
-    color: #d32f2f;
+    padding: 12px 16px;
+    border-radius: 10px;
+}
+
+#result.success {
+    display: block;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 2px solid #4caf50;
+}
+
+#result.error {
+    display: block;
+    background-color: #ffebee;
+    color: #c41e3a;
+    border: 2px solid #c41e3a;
 }
 
 /* ===== RESPONSIVE ===== */
@@ -149,10 +227,14 @@ button {
 <body>
 
     <div class="header">
-        <h2>Mənim profilim</h2>
-        <div class="logout" onclick="logout()">Çıxış</div>
-    </div>
-
+            <div class="brand">
+                <div class="brand-mark">
+                    <svg viewBox="0 0 24 24" fill="#d9001b" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C7.58 2 4 5.58 4 10C4 15.25 12 22 12 22C12 22 20 15.25 20 10C20 5.58 16.42 2 12 2Z"/><path d="M12 5.5L14.5 10H9.5L12 5.5Z" fill="white"/></svg>
+                </div>
+                <span>Turkish Airlines</span>
+            </div>
+            <div class="logout" onclick="logout()">Çıxış</div>
+        </div>
     <div class="container">
         <div id="result" class="result"></div>
 
@@ -160,15 +242,15 @@ button {
             <img src="" alt="Profil şəkli" id="profileImage" class="profile-pic">
         </div>
 
+        <div class="button-group">
+            <input type="file" id="fileInput">
+            <button class="upload-btn" onclick="uploadPicture()">Şəkil yüklə</button>
+            <button class="delete-btn" onclick="deletePicture()">Şəkli sil</button>
+        </div>
 
-
-        <input type="file" id="fileInput">
-        <button class="upload-btn" onclick="uploadPicture()">Şəkil yüklə</button>
-        <button class="delete-btn" onclick="deletePicture()">Şəkli sil</button>
-
-        <hr>
-
-        <div class="profile-item">
+        <div class="profile-card">
+            <h3>Profil Məlumatları</h3>
+            <div class="profile-item">
             <label>Ad</label>
             <span id="name"></span>
         </div>
@@ -192,6 +274,12 @@ button {
             <label>İstifadəçi adı</label>
             <span id="username"></span>
         </div>
+
+        <div class="profile-item" style="margin-top:20px; border:none; padding:0;">
+            <label style="font-weight:700; font-size:16px; color:#2c3e50;">Bronlar</label>
+        </div>
+        <div id="bookingMessage" class="empty-state">Bronlar yüklənir...</div>
+        <div id="bookingsList"></div>
 
         <button class="edit-btn">
             <a href="customerUpdate.html">Redaktə et</a>
@@ -221,28 +309,77 @@ button {
 
                 const data = await response.json();
 
-                if(!response.ok) {
-                    document.getElementById("result").innerText = data.message;
+                if(!response.ok || !data.success) {
+                    document.getElementById("result").innerText = data.message || "Profil məlumatlarını yükləmək mümkün olmadı";
+                    return;
                 }
 
-            document.getElementById("name").innerText = data.name;
-            document.getElementById("surname").innerText = data.surname;
-            document.getElementById("email").innerText = data.email;
-            document.getElementById("phone").innerText = data.phone;
-            document.getElementById("birthday").innerText = data.birthday;
-            document.getElementById("username").innerText = data.username;
+                const profile = data.data;
+                const [firstName, ...rest] = (profile.fullName || "").split(" ");
+                const lastName = rest.join(" ");
 
-            if(data.profilePictureUrl) {
-                document.getElementById("profileImage").src = "http://localhost:8080/api/files/download/" + data.profilePictureUrl;
-            } else {
-                document.getElementById("profileImage").src = "https://via.placeholder.com/120";
-            }
+                document.getElementById("name").innerText = firstName || "-";
+                document.getElementById("surname").innerText = lastName || "-";
+                document.getElementById("email").innerText = profile.email || "-";
+                document.getElementById("phone").innerText = profile.phone || "-";
+                document.getElementById("birthday").innerText = profile.birthday || "-";
+                document.getElementById("username").innerText = profile.username || "-";
 
-            }catch(e) {
+                if(profile.profilePictureUrl) {
+                    document.getElementById("profileImage").src = "http://localhost:8080/api/files/download/" + profile.profilePictureUrl;
+                } else {
+                    document.getElementById("profileImage").src = "https://via.placeholder.com/120";
+                }
+
+                loadBookings();
+            } catch(e) {
                 document.getElementById("result").innerText = "Profil məlumatlarını yükləmək mümkün olmadı";
             }
         }
 
+        async function loadBookings() {
+            try {
+                const response = await fetch("http://localhost:8080/api/bookings/my-bookings?page=0&size=20", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+
+                const data = await response.json();
+                const bookingMessage = document.getElementById("bookingMessage");
+                const bookingsList = document.getElementById("bookingsList");
+
+                if(!response.ok || !data.success) {
+                    bookingMessage.innerText = data.message || "Bronları yükləmək mümkün olmadı";
+                    bookingsList.innerHTML = "";
+                    return;
+                }
+
+                const bookings = data.data?.content || [];
+
+                if(bookings.length === 0) {
+                    bookingMessage.innerText = "Hələ bronunuz yoxdur.";
+                    bookingsList.innerHTML = "";
+                    return;
+                }
+
+                bookingMessage.innerText = "";
+                bookingsList.innerHTML = bookings.map(booking => `
+                    <div class="booking-card">
+                        <div class="booking-row"><span><strong>Uçuş:</strong> ${booking.flight.flightNumber}</span> <span>${booking.flight.origin} → ${booking.flight.destination}</span></div>
+                        <div class="booking-row"><span><strong>Tarix:</strong> ${new Date(booking.flight.departureTime).toLocaleString('az-AZ')}</span></div>
+                        <div class="booking-row"><span><strong>Oturacaq:</strong> ${booking.seat.seatNumber} (${booking.seat.seatClass})</span></div>
+                        <div class="booking-row"><span><strong>Passajer:</strong> ${booking.passengerName}</span></div>
+                        <div class="booking-row"><span><strong>Qiymət:</strong> ₼${parseFloat(booking.totalPrice).toFixed(2)}</span></div>
+                        <div class="booking-row status-row"><span><strong>Status:</strong> ${booking.status}</span></div>
+                        ${booking.status !== 'CANCELLED' ? `<button class="cancel-btn" onclick="cancelBooking(${booking.id})">Bronu ləğv et</button>` : ''}
+                    </div>
+                `).join("");
+            } catch(e) {
+                document.getElementById("bookingMessage").innerText = "Bronları yükləmək mümkün olmadı";
+            }
+        }
 
         async function uploadPicture() {
             const fileInput = document.getElementById("fileInput");
@@ -254,6 +391,7 @@ button {
             const formData = new FormData();
             formData.append("file", fileInput.files[0]);
 
+            const file = fileInput.files[0];
             const response = await fetch("http://localhost:8080/api/customers/upload-picture", {
                 method: "POST",
                 headers: {"Authorization" : "Bearer " + token},
@@ -261,14 +399,23 @@ button {
             });
 
             const data = await response.json();
+            const resultEl = document.getElementById("result");
 
             if(response.ok) {
-                document.getElementById("result").innerText = "Şəkil uğurla yükləndi";
+                const previewUrl = URL.createObjectURL(file);
+                const profileImage = document.getElementById("profileImage");
+                profileImage.src = previewUrl;
+                profileImage.onload = () => URL.revokeObjectURL(previewUrl);
+                resultEl.className = "success";
+                resultEl.innerText = "Şəkil uğurla yükləndi";
+                resultEl.style.display = "block";
+                fileInput.value = "";
             } else {
-                document.getElementById("result").innerText = data.message;
+                resultEl.className = "error";
+                resultEl.innerText = data.message || "Şəkil yüklənmədi";
+                resultEl.style.display = "block";
             }
         }
-
 
         async function deletePicture() {
             const confirmDelete = confirm("Profil şəklini silmək istədiyiniə əminsiniz?");
@@ -288,14 +435,12 @@ button {
             } else {
                 document.getElementById("result").innerText = data.message;
             }
-            
         }
 
         function logout() {
             localStorage.removeItem("accessToken");
             window.location.href="login.html";
         }
-
 
         async function deleteProfile() {
             const confirmDelete = confirm(
