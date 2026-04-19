@@ -18,6 +18,9 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
     List<Flight> findByAirlineManagerId(Long airlineManagerId);
     Page<Flight> findByAirlineManagerId(Long airlineManagerId, Pageable pageable);
     
+    @Query("SELECT f FROM Flight f WHERE f.active = true")
+    Page<Flight> findAllActive(Pageable pageable);
+    
     @Query("SELECT f FROM Flight f WHERE f.origin = :origin AND f.destination = :destination AND f.active = true")
     Page<Flight> searchByOriginAndDestination(@Param("origin") String origin, 
                                                @Param("destination") String destination, 

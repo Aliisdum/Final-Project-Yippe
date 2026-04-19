@@ -3,8 +3,8 @@ package az.developia.flight_booking_name.controller;
 import az.developia.flight_booking_name.request.CreateFlightRequest;
 import az.developia.flight_booking_name.request.UpdateFlightRequest;
 import az.developia.flight_booking_name.response.ApiResponse;
-import az.developia.flight_booking_name.response.ApiResponse.PaginationInfo;
 import az.developia.flight_booking_name.response.FlightResponse;
+import az.developia.flight_booking_name.response.FlightsResponse;
 import az.developia.flight_booking_name.service.FlightService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -45,11 +45,7 @@ public class FlightController {
     public ResponseEntity<ApiResponse<FlightResponse>> createFlight(@Valid @RequestBody CreateFlightRequest request) {
         Long managerId = getAirlineManagerId();
         var flight = flightService.createFlight(request, managerId);
-        var flightPage = flightService.getAllFlights(PageRequest.of(0, 1));
-        var response = flightPage.getContent().stream()
-                .filter(f -> f.getId().equals(flight.getId()))
-                .findFirst()
-                .orElse(null);
+        var response = flightService.mapToFlightResponse(flight);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.<FlightResponse>builder()
@@ -69,11 +65,7 @@ public class FlightController {
             @Valid @RequestBody UpdateFlightRequest request) {
         Long managerId = getAirlineManagerId();
         var flight = flightService.updateFlight(id, request, managerId);
-        var flightPage = flightService.getAllFlights(PageRequest.of(0, 1));
-        var response = flightPage.getContent().stream()
-                .filter(f -> f.getId().equals(flight.getId()))
-                .findFirst()
-                .orElse(null);
+        var response = flightService.mapToFlightResponse(flight);
 
         return ResponseEntity.ok(ApiResponse.<FlightResponse>builder()
                 .success(true)
@@ -102,11 +94,7 @@ public class FlightController {
     @Operation(summary = "Get flight details", description = "Get detailed information about a specific flight")
     public ResponseEntity<ApiResponse<FlightResponse>> getFlightById(@PathVariable Long id) {
         var flight = flightService.getFlightById(id);
-        var flightPage = flightService.getAllFlights(PageRequest.of(0, 1));
-        var response = flightPage.getContent().stream()
-                .filter(f -> f.getId().equals(flight.getId()))
-                .findFirst()
-                .orElse(null);
+        var response = flightService.mapToFlightResponse(flight);
 
         return ResponseEntity.ok(ApiResponse.<FlightResponse>builder()
                 .success(true)
@@ -118,18 +106,27 @@ public class FlightController {
 
     @GetMapping
     @Operation(summary = "Get all flights", description = "Get list of all flights with pagination")
-    public ResponseEntity<ApiResponse<Page<FlightResponse>>> getAllFlights(
+    public ResponseEntity<ApiResponse<FlightsResponse>> getAllFlights(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<FlightResponse> flights = flightService.getAllFlights(pageable);
 
-        return ResponseEntity.ok(ApiResponse.<Page<FlightResponse>>builder()
+        FlightsResponse flightsResponse = FlightsResponse.builder()
+                .content(flights.getContent())
+                .page(flights.getNumber())
+                .size(flights.getSize())
+                .totalElements(flights.getTotalElements())
+                .totalPages(flights.getTotalPages())
+                .first(flights.isFirst())
+                .last(flights.isLast())
+                .build();
+
+        return ResponseEntity.ok(ApiResponse.<FlightsResponse>builder()
                 .success(true)
                 .message("Flights retrieved successfully")
-                .data(flights)
+                .data(flightsResponse)
                 .statusCode(HttpStatus.OK.value())
-                .pagination(PaginationInfo.from(flights))
                 .build());
     }
 
@@ -148,7 +145,7 @@ public class FlightController {
                 .message("Flights found")
                 .data(flights)
                 .statusCode(HttpStatus.OK.value())
-                .pagination(PaginationInfo.from(flights))
+                .pagination(ApiResponse.PaginationInfo.from(flights))
                 .build());
     }
 
@@ -170,7 +167,7 @@ public class FlightController {
                 .message("Flights found")
                 .data(flights)
                 .statusCode(HttpStatus.OK.value())
-                .pagination(PaginationInfo.from(flights))
+                .pagination(ApiResponse.PaginationInfo.from(flights))
                 .build());
     }
 }

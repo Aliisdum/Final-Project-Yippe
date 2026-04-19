@@ -376,37 +376,60 @@
 
         // Check authentication
         window.onload = () => {
+            console.log("🔐 window.onload triggered");
             const token = localStorage.getItem("accessToken");
             const username = localStorage.getItem("username");
             
+            console.log("🔑 Token present:", !!token);
+            console.log("👤 Username:", username);
+            
             if (!token) {
+                console.warn("❌ No token found - redirecting to login");
                 window.location.href = "login.html";
                 return;
             }
             
+            console.log("✅ Token OK, loading username");
             document.getElementById("username").innerText = "Salam, " + (username || "Müştəri");
+            console.log("📍 Calling loadFlights()");
             loadFlights();
         };
 
         async function loadFlights() {
             try {
-                const response = await fetch("http://localhost:8080/api/flights?page=0&size=" + pageSize);
+                console.log("🔄 Loading flights...");
+                const token = localStorage.getItem("accessToken");
+                console.log("🔑 Token for this request:", !!token);
+                
+                const response = await fetch("http://localhost:8080/api/flights?page=0&size=" + pageSize, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                console.log("📡 Response status:", response.status);
                 
                 if (!response.ok) {
                     throw new Error("Uçuşlar yükləmə uğursuz oldu");
                 }
 
                 const data = await response.json();
+                console.log("📦 API Response data:", data);
+                console.log("✅ Success:", data.success);
+                console.log("📋 Data.data:", data.data);
+                console.log("🛫 Content flights:", data.data?.content);
                 
                 if (data.success && data.data && data.data.content) {
                     allFlights = data.data.content;
+                    console.log("✈️ All flights set:", allFlights.length, "flights");
                     displayFlights(allFlights);
                     updatePagination(data.data);
                 } else {
+                    console.warn("⚠️ No flights found or invalid response structure");
                     document.getElementById("flightsList").innerHTML = '<div class="empty-state">Uçuş tapılmadı</div>';
                 }
             } catch (error) {
-                console.error("Xəta:", error);
+                console.error("❌ Xəta:", error);
                 showMessage("Kəsə dəqiqəsi ilə uçuşlar yükləmə uğursuz oldu", "error");
             }
         }
@@ -431,7 +454,12 @@
                     url = `http://localhost:8080/api/flights/search/price?origin=${origin}&destination=${destination}&minPrice=${minPrice}&maxPrice=${maxPrice}&page=0&size=${pageSize}`;
                 }
 
-                const response = await fetch(url);
+                const token = localStorage.getItem("accessToken");
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
                 
                 if (!response.ok) {
                     throw new Error("Axtarış uğursuz oldu");
@@ -454,14 +482,16 @@
         }
 
         function displayFlights(flights) {
+            console.log("🎨 displayFlights called with", flights.length, "flights");
             const flightsList = document.getElementById("flightsList");
             
             if (!flights || flights.length === 0) {
+                console.warn("⚠️ No flights to display");
                 flightsList.innerHTML = '<div class="empty-state">Heç bir uçuş tapılmadı</div>';
                 return;
             }
 
-            flightsList.innerHTML = flights.map(flight => `
+            const html = flights.map(flight => `
                 <div class="flight-card" onclick="selectFlight(${flight.id}, '${flight.flightNumber}', '${flight.origin}', '${flight.destination}', '${flight.departureTime}', '${flight.price}')">
                     <div class="flight-header">
                         <div class="flight-time">${flight.flightNumber}</div>
@@ -494,6 +524,10 @@
                     </button>
                 </div>
             `).join('');
+            
+            console.log("📝 Generated HTML:", html.substring(0, 200) + "...");
+            flightsList.innerHTML = html;
+            console.log("✅ Flights displayed successfully");
         }
 
         function selectFlight(id, flightNumber, origin, destination, departureTime, price) {

@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-FlightBookingNameApplication<flight-booking-name>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "az.developia.flight_booking_name.FlightBookingNameApplication",
+            "projectName": "flight-booking-name",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

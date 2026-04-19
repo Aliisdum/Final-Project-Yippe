@@ -103,7 +103,7 @@ public class FlightService {
     }
 
     public Page<FlightResponse> getAllFlights(Pageable pageable) {
-        Page<Flight> flights = flightRepository.findAll(pageable);
+        Page<Flight> flights = flightRepository.findAllActive(pageable);
         List<FlightResponse> responses = flights.getContent().stream()
                 .map(this::mapToFlightResponse)
                 .collect(Collectors.toList());
@@ -145,7 +145,7 @@ public class FlightService {
         return new PageImpl<>(responses, pageable, flights.getTotalElements());
     }
 
-    private FlightResponse mapToFlightResponse(Flight flight) {
+    public FlightResponse mapToFlightResponse(Flight flight) {
         UserResponse managerResponse = UserResponse.builder()
                 .id(flight.getAirlineManager().getId())
                 .username(flight.getAirlineManager().getUsername())
