@@ -6,7 +6,7 @@ import az.developia.flight_booking_name.response.ApiResponse;
 import az.developia.flight_booking_name.response.BookingResponse;
 import az.developia.flight_booking_name.response.UserResponse;
 import az.developia.flight_booking_name.service.BookingService;
-import az.developia.flight_booking_name.service.FileStorageService;
+
 import az.developia.flight_booking_name.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -32,7 +32,7 @@ public class CustomerController {
 
     private UserService userService;
     private BookingService bookingService;
-    private FileStorageService fileStorageService;
+
 
     private Long getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -42,7 +42,7 @@ public class CustomerController {
         return userService.getUserByUsername(authentication.getName()).getId();
     }
 
-    private UserResponse mapToUserResponse(az.developia.flight_booking_name.entity.User user) {
+    private UserResponse mapToUserResponse(User user) {
         String fullName = user.getFullName() != null ? user.getFullName().trim() : "";
         String[] nameParts = fullName.split(" ");
         String firstName = nameParts.length > 0 ? nameParts[0] : "";
@@ -55,7 +55,6 @@ public class CustomerController {
                 .fullName(fullName)
                 .name(firstName)
                 .surname(lastName)
-                .profilePictureUrl(user.getProfilePictureUrl())
                 .role(user.getRole().toString())
                 .build();
     }
@@ -91,42 +90,5 @@ public class CustomerController {
                 .build());
     }
 
-    @PostMapping(value = "/upload-picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('CUSTOMER')")
-    @Operation(summary = "Upload profile picture", description = "Upload or update the customer's profile picture")
-    public ResponseEntity<ApiResponse<UserResponse>> uploadProfilePicture(@RequestPart("file") MultipartFile file) {
-        Long userId = getCurrentUserId();
-        var user = userService.getUserById(userId);
-        String oldPicture = user.getProfilePictureUrl();
-        String fileName = fileStorageService.storeFile(file);
-        var updatedUser = userService.updateProfilePicture(userId, fileName);
-        if (oldPicture != null && !oldPicture.isBlank()) {
-            fileStorageService.deleteFile(oldPicture);
-        }
-        return ResponseEntity.ok(ApiResponse.<UserResponse>builder()
-                .success(true)
-                .message("Profile picture uploaded successfully")
-                .data(mapToUserResponse(updatedUser))
-                .statusCode(HttpStatus.OK.value())
-                .build());
-    }
 
-    @DeleteMapping("/delete-picture")
-    @PreAuthorize("hasRole('CUSTOMER')")
-    @Operation(summary = "Delete profile picture", description = "Delete the customer's profile picture")
-    public ResponseEntity<ApiResponse<UserResponse>> deleteProfilePicture() {
-        Long userId = getCurrentUserId();
-        var user = userService.getUserById(userId);
-        String pictureUrl = user.getProfilePictureUrl();
-        if (pictureUrl != null && !pictureUrl.isBlank()) {
-            fileStorageService.deleteFile(pictureUrl);
-            userService.updateProfilePicture(userId, null);
-        }
-        return ResponseEntity.ok(ApiResponse.<UserResponse>builder()
-                .success(true)
-                .message("Profile picture deleted successfully")
-                .data(mapToUserResponse(userService.getUserById(userId)))
-                .statusCode(HttpStatus.OK.value())
-                .build());
-    }
 }

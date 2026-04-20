@@ -79,11 +79,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
     }
 
-    public User updateProfilePicture(Long id, String profilePictureUrl) {
-        User user = getUserById(id);
-        user.setProfilePictureUrl(profilePictureUrl);
-        return userRepository.save(user);
-    }
+
 
     public Page<UserResponse> getAllUsers(Pageable pageable) {
         Page<User> users = userRepository.findAll(pageable);
@@ -109,7 +105,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    private UserResponse mapToUserResponse(User user) {
+public UserResponse mapToUserResponse(User user) {
         String fullName = user.getFullName() != null ? user.getFullName().trim() : "";
         String[] nameParts = fullName.split(" ");
         String firstName = nameParts.length > 0 ? nameParts[0] : "";
@@ -122,7 +118,6 @@ public class UserService {
                 .fullName(fullName)
                 .name(firstName)
                 .surname(lastName)
-                .profilePictureUrl(user.getProfilePictureUrl())
                 .role(user.getRole().toString())
                 .build();
     }

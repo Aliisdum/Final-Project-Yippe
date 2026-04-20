@@ -382,8 +382,8 @@
                     document.getElementById("bookingId").innerText = booking.id;
                     document.getElementById("flightNumber").innerText = booking.flight.flightNumber;
                     document.getElementById("route").innerText = booking.flight.origin + " → " + booking.flight.destination;
-                    document.getElementById("passengers").innerText = booking.passengerCount;
-                    document.getElementById("seatClass").innerText = booking.seatClass;
+                document.getElementById("passengers").innerText = 1;
+                    document.getElementById("seatClass").innerText = booking.seat.seatClass;
                     document.getElementById("totalAmount").innerText = "₼" + parseFloat(booking.totalPrice).toFixed(2);
                 } else {
                     showMessage("Sifariş məlumatları yükləmə uğursuz", "error");

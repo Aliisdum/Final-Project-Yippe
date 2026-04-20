@@ -90,7 +90,7 @@ public class SecurityConfig {
                         .requestMatchers("/home", "/profile", "/admin", "/booking", "/payment", "/register").permitAll()
                         .requestMatchers("/static/**", "/css/**", "/js/**", "/img/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/files/download/**").permitAll()
+
                         .requestMatchers("/api/customers/**").hasRole("CUSTOMER")
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()

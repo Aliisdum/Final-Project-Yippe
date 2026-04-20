@@ -242,11 +242,7 @@ button {
             <img src="" alt="Profil şəkli" id="profileImage" class="profile-pic">
         </div>
 
-        <div class="button-group">
-            <input type="file" id="fileInput">
-            <button class="upload-btn" onclick="uploadPicture()">Şəkil yüklə</button>
-            <button class="delete-btn" onclick="deletePicture()">Şəkli sil</button>
-        </div>
+
 
         <div class="profile-card">
             <h3>Profil Məlumatları</h3>
@@ -281,12 +277,13 @@ button {
         <div id="bookingMessage" class="empty-state">Bronlar yüklənir...</div>
         <div id="bookingsList"></div>
 
-        <button class="edit-btn">
-            <a href="customerUpdate.html">Redaktə et</a>
-        </button>
+        <div style="margin-top: 20px;">
+            <button class="edit-btn" onclick="goBack()">
+                < Ana səhifəyə qayıt
+            </button>
+        </div>
 
-
-        <div>
+        <div style="margin-top: 10px;">
             <button class="delete-btn" onclick="deleteProfile()">Hesabı Sil</button>
         </div>
     </div>
@@ -325,11 +322,7 @@ button {
                 document.getElementById("birthday").innerText = profile.birthday || "-";
                 document.getElementById("username").innerText = profile.username || "-";
 
-                if(profile.profilePictureUrl) {
-                    document.getElementById("profileImage").src = "http://localhost:8080/api/files/download/" + profile.profilePictureUrl;
-                } else {
-                    document.getElementById("profileImage").src = "https://via.placeholder.com/120";
-                }
+                document.getElementById("profileImage").src = "https://via.placeholder.com/120";
 
                 loadBookings();
             } catch(e) {
@@ -381,59 +374,31 @@ button {
             }
         }
 
-        async function uploadPicture() {
-            const fileInput = document.getElementById("fileInput");
-            if(!fileInput.files.length) {
-                alert("Şəkil seçin");
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append("file", fileInput.files[0]);
-
-            const file = fileInput.files[0];
-            const response = await fetch("http://localhost:8080/api/customers/upload-picture", {
-                method: "POST",
-                headers: {"Authorization" : "Bearer " + token},
-                body: formData
-            });
-
-            const data = await response.json();
-            const resultEl = document.getElementById("result");
-
-            if(response.ok) {
-                const previewUrl = URL.createObjectURL(file);
-                const profileImage = document.getElementById("profileImage");
-                profileImage.src = previewUrl;
-                profileImage.onload = () => URL.revokeObjectURL(previewUrl);
-                resultEl.className = "success";
-                resultEl.innerText = "Şəkil uğurla yükləndi";
-                resultEl.style.display = "block";
-                fileInput.value = "";
-            } else {
-                resultEl.className = "error";
-                resultEl.innerText = data.message || "Şəkil yüklənmədi";
-                resultEl.style.display = "block";
-            }
+        function goBack() {
+            window.location.href = "main.html";
         }
 
-        async function deletePicture() {
-            const confirmDelete = confirm("Profil şəklini silmək istədiyiniə əminsiniz?");
-
-            if(!confirmDelete) {
+        async function cancelBooking(bookingId) {
+            if (!confirm("Bu brionu ləğv etmək istədiyinizə əminsiniz?")) {
                 return;
             }
-
-            const response = await fetch("http://localhost:8080/api/customers/delete-picture", {
-                method: "DELETE",
-                headers: {"Authorization" : "Bearer " + token}
-            });
-            const data = await response.json();
-
-            if(response.ok) {
-                document.getElementById("result").innerText = "Şəkil uğurla silindi";
-            } else {
-                document.getElementById("result").innerText = data.message;
+            try {
+                const token = localStorage.getItem("accessToken");
+                const response = await fetch(`http://localhost:8080/api/bookings/${bookingId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert("Bron ləğv edildi");
+                    loadBookings(); // Reload bookings
+                } else {
+                    alert(data.message || "Ləğv etmək mümkün olmadı");
+                }
+            } catch (e) {
+                alert("Xəta baş verdi");
             }
         }
 

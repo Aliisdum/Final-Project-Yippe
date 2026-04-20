@@ -576,8 +576,9 @@
                 return;
             }
 
-            const seatClass = document.getElementById("seatClass").value;
-            const passengerName = localStorage.getItem("username") || "Passenger";
+            const seatClassSelect = document.getElementById("seatClass").value;
+            const passengerCount = parseInt(document.getElementById("passengerCount").value) || 1;
+            const passengerName = prompt("Passajer adı daxil edin:") || "Passenger";
             const token = localStorage.getItem("accessToken");
 
             if (!passengerName || passengerName.trim() === "") {
@@ -586,7 +587,7 @@
             }
 
             const availableSeat = selectedFlight.plane?.seats?.find(seat => {
-                return seat.seatClass === seatClass && seat.status === 'AVAILABLE';
+                return seat.seatClass === seatClassSelect && seat.status === 'AVAILABLE';
             });
 
             if (!availableSeat) {
@@ -594,14 +595,19 @@
                 return;
             }
 
-            const bookingRequest = {
-                flightId: selectedFlight.id,
-                seatId: availableSeat.id,
-                passengerName: passengerName
-            };
-
-            try {
-                const response = await fetch(`http://localhost:8080/api/bookings`, {
+            for(let i = 0; i < passengerCount; i++) {
+                const seat = selectedFlight.plane.seats.find(s => s.seatClass === seatClassSelect && s.status === 'AVAILABLE');
+                if (!seat) {
+                    alert("Boş yer tapılmadı");
+                    return;
+                }
+                const bookingRequest = {
+                    flightId: selectedFlight.id,
+                    seatId: seat.id,
+                    passengerName: passengerName
+                };
+                // POST booking
+                await fetch(`http://localhost:8080/api/bookings`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -609,19 +615,10 @@
                     },
                     body: JSON.stringify(bookingRequest)
                 });
-
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    alert("Booking created successfully!");
-                    closeBookingModal();
-                    window.location.href = "payment.html?bookingId=" + data.data.id;
-                } else {
-                    alert("Error: " + (data.message || "Booking failed"));
-                }
-            } catch (error) {
-                alert("Error: " + error.message);
             }
+
+            alert("Booking created successfully! (Multiple bookings if yolcu sayı >1)");
+            closeBookingModal();
         }
 
         function updatePagination(pageData) {
