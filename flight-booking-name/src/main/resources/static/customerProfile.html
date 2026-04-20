@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Uçuş Booking - Müştəri Profili</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="booking-card.css">
     <style>
 * {
     box-sizing: border-box;
@@ -360,15 +361,15 @@ button {
                 bookingMessage.innerText = "";
                 bookingsList.innerHTML = bookings.map(booking => `
                     <div class="booking-card">
-                        <div class="booking-row"><span><strong>Uçuş:</strong> ${booking.flight.flightNumber}</span> <span>${booking.flight.origin} → ${booking.flight.destination}</span></div>
-                        <div class="booking-row"><span><strong>Tarix:</strong> ${new Date(booking.flight.departureTime).toLocaleString('az-AZ')}</span></div>
-                        <div class="booking-row"><span><strong>Oturacaq:</strong> ${booking.seat.seatNumber} (${booking.seat.seatClass})</span></div>
-                        <div class="booking-row"><span><strong>Passajer:</strong> ${booking.passengerName}</span></div>
-                        <div class="booking-row"><span><strong>Qiymət:</strong> ₼${parseFloat(booking.totalPrice).toFixed(2)}</span></div>
-                        <div class="booking-row status-row"><span><strong>Status:</strong> ${booking.status}</span></div>
-                        ${booking.status !== 'CANCELLED' ? `<button class="cancel-btn" onclick="cancelBooking(${booking.id})">Bronu ləğv et</button>` : ''}
-                    </div>
-                `).join("");
+                        <div class="booking-row"><span><strong>Uçuş:</strong> ${booking.flight?.flightNumber || 'N/A'}</span> <span>${booking.flight?.origin || ''} → ${booking.flight?.destination || ''}</span></div>
+                        <div class="booking-row"><span><strong>Tarix:</strong> ${booking.flight?.departureTime ? new Date(booking.flight.departureTime).toLocaleString('az-AZ') : 'N/A'}</span></div>
+                        <div class="booking-row"><span><strong>Oturacaq:</strong> ${booking.seat?.seatNumber || 'N/A'} (${booking.seat?.seatClass || 'N/A'})</span></div>
+                        <div class="booking-row"><span><strong>Passajer:</strong> ${booking.passengerName || 'N/A'}</span></div>
+                        <div class="booking-row"><span><strong>Qiymət:</strong> ₼${parseFloat(booking.totalPrice || 0).toFixed(2)}</span></div>
+                        <div class="booking-row status-row"><span><strong>Status:</strong> ${booking.status || 'N/A'}</span></div>
+                        ${booking.status === 'PENDING' ? `<button class="pay-btn" onclick="payBooking(${booking.id})">Ödəniş et</button>` : ''}
+                        ${booking.status !== 'CANCELLED' && booking.status !== 'CONFIRMED' ? `<button class="cancel-btn" onclick="cancelBooking(${booking.id})">Ləğv et</button>` : ''}
+`).join(""); 
             } catch(e) {
                 document.getElementById("bookingMessage").innerText = "Bronları yükləmək mümkün olmadı";
             }
@@ -376,6 +377,10 @@ button {
 
         function goBack() {
             window.location.href = "main.html";
+        }
+
+        function payBooking(bookingId) {
+            window.location.href = `payment.html?bookingId=${bookingId}`;
         }
 
         async function cancelBooking(bookingId) {
