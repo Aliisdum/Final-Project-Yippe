@@ -595,30 +595,57 @@
                 return;
             }
 
+            let successCount = 0;
+            let errorMessages = [];
+
             for(let i = 0; i < passengerCount; i++) {
                 const seat = selectedFlight.plane.seats.find(s => s.seatClass === seatClassSelect && s.status === 'AVAILABLE');
                 if (!seat) {
-                    alert("Boş yer tapılmadı");
-                    return;
+                    errorMessages.push("Boş yer tapılmadı (yolçu " + (i + 1) + ")");
+                    continue;
                 }
                 const bookingRequest = {
                     flightId: selectedFlight.id,
                     seatId: seat.id,
-                    passengerName: passengerName
+                    passengerName: passengerName,
+                    passengerCount: 1
                 };
-                // POST booking
-                await fetch(`http://localhost:8080/api/bookings`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": "Bearer " + token
-                    },
-                    body: JSON.stringify(bookingRequest)
-                });
+
+                try {
+                    const response = await fetch(`http://localhost:8080/api/bookings`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": "Bearer " + token
+                        },
+                        body: JSON.stringify(bookingRequest)
+                    });
+
+                    const data = await response.json();
+                    console.log("Booking response:", response.status, data);
+
+                    if (!response.ok || !data.success) {
+                        errorMessages.push(data.message || "Server xətası (HTTP " + response.status + ")");
+                    } else {
+                        // Mark seat as booked locally so next iteration finds another seat
+                        seat.status = 'BOOKED';
+                        successCount++;
+                        console.log("Booking created:", data.data);
+                    }
+                } catch (e) {
+                    console.error("Booking fetch error:", e);
+                    errorMessages.push("Şəbəkə xətası: " + e.message);
+                }
             }
 
-            alert("Booking created successfully! (Multiple bookings if yolcu sayı >1)");
-            closeBookingModal();
+            if (errorMessages.length > 0) {
+                alert("Bəzi bronlar yaradılmadı:\n" + errorMessages.join("\n"));
+            }
+
+            if (successCount > 0) {
+                alert(successCount + " bron uğurla yaradıldı!");
+                closeBookingModal();
+            }
         }
 
         function updatePagination(pageData) {

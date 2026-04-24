@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,12 +53,16 @@ public class BookingService {
                 });
 
         // Create booking
+        int count = request.getPassengerCount() != null ? request.getPassengerCount() : 1;
+        BigDecimal total = flight.getPrice().multiply(BigDecimal.valueOf(count));
+
         Booking booking = Booking.builder()
                 .customer(customer)
                 .flight(flight)
                 .seat(seat)
                 .passengerName(request.getPassengerName())
-                .totalPrice(flight.getPrice())
+                .passengerCount(count)
+                .totalPrice(total)
                 .status(BookingStatus.PENDING)
                 .build();
 
@@ -198,6 +203,7 @@ public class BookingService {
                 .flight(flightResponse)
                 .seat(seatResponse)
                 .passengerName(booking.getPassengerName())
+                .passengerCount(booking.getPassengerCount())
                 .totalPrice(booking.getTotalPrice())
                 .status(booking.getStatus().toString())
                 .payment(paymentResponse)

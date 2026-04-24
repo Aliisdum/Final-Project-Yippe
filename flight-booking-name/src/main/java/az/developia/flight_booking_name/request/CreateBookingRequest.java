@@ -17,6 +17,9 @@ public class CreateBookingRequest {
     @NotNull(message = "Seat ID is required")
     private Long seatId;
 
-    @NotNull(message = "Passenger name is required")
+@NotNull(message = "Passenger name is required")
     private String passengerName;
+
+    @Builder.Default
+    private Integer passengerCount = 1;
 }

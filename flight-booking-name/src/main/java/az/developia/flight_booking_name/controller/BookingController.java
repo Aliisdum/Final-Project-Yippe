@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/bookings")
 @AllArgsConstructor
+@Slf4j
 @Tag(name = "Booking Management", description = "Flight Booking APIs")
 @SecurityRequirement(name = "Bearer Authentication")
 public class BookingController {
@@ -46,7 +48,10 @@ public class BookingController {
     public ResponseEntity<ApiResponse<BookingResponse>> createBooking(
             @Valid @RequestBody CreateBookingRequest request) {
         Long customerId = getCustomerId();
+        log.info("Creating booking for customerId={}, flightId={}, seatId={}", 
+                 customerId, request.getFlightId(), request.getSeatId());
         var booking = bookingService.createBooking(request, customerId);
+        log.info("Booking created successfully: id={}, customerId={}", booking.getId(), customerId);
         var response = bookingService.getBookingResponseById(booking.getId());
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -79,8 +84,10 @@ public class BookingController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Long customerId = getCustomerId();
+        log.info("Fetching bookings for customerId={}, page={}, size={}", customerId, page, size);
         Pageable pageable = PageRequest.of(page, size);
         Page<BookingResponse> bookings = bookingService.getMyBookings(customerId, pageable);
+        log.info("Found {} bookings for customerId={}", bookings.getTotalElements(), customerId);
 
         return ResponseEntity.ok(ApiResponse.<Page<BookingResponse>>builder()
                 .success(true)

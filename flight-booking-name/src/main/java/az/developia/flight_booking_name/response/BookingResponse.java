@@ -18,6 +18,7 @@ public class BookingResponse {
     private FlightResponse flight;
     private SeatResponse seat;
     private String passengerName;
+    private Integer passengerCount = 1;
     private BigDecimal totalPrice;
     private String status;
     private PaymentResponse payment;

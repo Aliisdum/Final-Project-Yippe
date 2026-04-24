@@ -35,8 +35,12 @@ public class Booking {
     @JoinColumn(name = "seat_id", nullable = false)
     private Seat seat;
 
-    @NotBlank(message = "Passenger name cannot be blank")
+@NotBlank(message = "Passenger name cannot be blank")
     private String passengerName;
+
+    @NotNull(message = "Passenger count cannot be null")
+    @Positive(message = "Passenger count must be positive")
+    private Integer passengerCount = 1;
 
     @NotNull(message = "Total price cannot be null")
     @Positive(message = "Total price must be positive")

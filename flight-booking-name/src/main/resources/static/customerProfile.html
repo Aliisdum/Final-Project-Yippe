@@ -333,6 +333,7 @@ button {
 
         async function loadBookings() {
             try {
+                console.log("🔍 Loading bookings...");
                 const response = await fetch("http://localhost:8080/api/bookings/my-bookings?page=0&size=20", {
                     method: "GET",
                     headers: {
@@ -341,16 +342,21 @@ button {
                 });
 
                 const data = await response.json();
+                console.log("📦 Bookings API response:", data);
+
                 const bookingMessage = document.getElementById("bookingMessage");
                 const bookingsList = document.getElementById("bookingsList");
 
                 if(!response.ok || !data.success) {
+                    console.error("❌ Bookings API error:", data.message, "Status:", response.status);
                     bookingMessage.innerText = data.message || "Bronları yükləmək mümkün olmadı";
                     bookingsList.innerHTML = "";
                     return;
                 }
 
                 const bookings = data.data?.content || [];
+                console.log("📋 Bookings found:", bookings.length);
+                console.log("🔎 Bookings data:", bookings);
 
                 if(bookings.length === 0) {
                     bookingMessage.innerText = "Hələ bronunuz yoxdur.";
@@ -371,6 +377,7 @@ button {
                         ${booking.status !== 'CANCELLED' && booking.status !== 'CONFIRMED' ? `<button class="cancel-btn" onclick="cancelBooking(${booking.id})">Ləğv et</button>` : ''}
 `).join(""); 
             } catch(e) {
+                console.error("❌ Bookings load exception:", e);
                 document.getElementById("bookingMessage").innerText = "Bronları yükləmək mümkün olmadı";
             }
         }
