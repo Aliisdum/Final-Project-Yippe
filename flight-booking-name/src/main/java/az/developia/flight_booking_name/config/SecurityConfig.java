@@ -88,7 +88,7 @@ public class SecurityConfig {
                         .requestMatchers("/", "/index.html", "/login.html", "/register.html", 
                                         "/main.html", "/payment.html", "/admin.html", "/customerProfile.html").permitAll()
                         .requestMatchers("/home", "/profile", "/admin", "/booking", "/payment", "/register").permitAll()
-                        .requestMatchers("/static/**", "/css/**", "/js/**", "/img/**").permitAll()
+                        .requestMatchers("/static/**", "/css/**", "/js/**", "/img/**", "/uploads/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
 
                         .requestMatchers("/api/customers/**").hasRole("CUSTOMER")

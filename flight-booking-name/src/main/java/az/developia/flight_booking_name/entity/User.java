@@ -36,6 +36,8 @@ public class User {
     @NotBlank(message = "Full name cannot be blank")
     private String fullName;
 
+    private String profilePictureUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;

@@ -112,6 +112,20 @@ public class BookingController {
                 .build());
     }
 
+    @PostMapping("/{id}/check-in")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "Check in for a booking", description = "Mark a confirmed booking as checked in")
+    public ResponseEntity<ApiResponse<BookingResponse>> checkInBooking(@PathVariable Long id) {
+        Long customerId = getCustomerId();
+        BookingResponse response = bookingService.mapToBookingResponse(bookingService.checkInBooking(id, customerId));
+        return ResponseEntity.ok(ApiResponse.<BookingResponse>builder()
+                .success(true)
+                .message("Check-in completed successfully")
+                .data(response)
+                .statusCode(HttpStatus.OK.value())
+                .build());
+    }
+
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get all bookings", description = "Get all bookings (Admin only)")

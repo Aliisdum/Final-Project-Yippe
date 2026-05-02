@@ -78,6 +78,21 @@ public class BookingService {
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found with id: " + id));
     }
 
+    public Booking checkInBooking(Long bookingId, Long customerId) {
+        Booking booking = getBookingById(bookingId);
+        if (!booking.getCustomer().getId().equals(customerId)) {
+            throw new BadRequestException("You are not authorized to check in this booking");
+        }
+        if (booking.getStatus() != BookingStatus.CONFIRMED) {
+            throw new BadRequestException("Only confirmed bookings can be checked in");
+        }
+        if (booking.getCheckedIn() != null && booking.getCheckedIn()) {
+            throw new BadRequestException("Booking has already been checked in");
+        }
+        booking.setCheckedIn(true);
+        return bookingRepository.save(booking);
+    }
+
     public Page<BookingResponse> getMyBookings(Long customerId, Pageable pageable) {
         Page<Booking> bookings = bookingRepository.findByCustomerId(customerId, pageable);
         List<BookingResponse> responses = bookings.getContent().stream()
@@ -122,7 +137,7 @@ public class BookingService {
         return mapToBookingResponse(booking);
     }
 
-    private BookingResponse mapToBookingResponse(Booking booking) {
+    public BookingResponse mapToBookingResponse(Booking booking) {
         UserResponse customerResponse = UserResponse.builder()
                 .id(booking.getCustomer().getId())
                 .username(booking.getCustomer().getUsername())
@@ -206,6 +221,7 @@ public class BookingService {
                 .passengerCount(booking.getPassengerCount())
                 .totalPrice(booking.getTotalPrice())
                 .status(booking.getStatus().toString())
+                .checkedIn(booking.getCheckedIn())
                 .payment(paymentResponse)
                 .createdAt(booking.getCreatedAt())
                 .updatedAt(booking.getUpdatedAt())

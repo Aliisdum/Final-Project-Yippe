@@ -50,6 +50,8 @@ public class Booking {
     @NotNull(message = "Status cannot be null")
     private BookingStatus status;
 
+    private Boolean checkedIn = false;
+
     @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
     private Payment payment;
 
@@ -65,6 +67,9 @@ public class Booking {
         updatedAt = LocalDateTime.now();
         if (status == null) {
             status = BookingStatus.PENDING;
+        }
+        if (checkedIn == null) {
+            checkedIn = false;
         }
     }
 

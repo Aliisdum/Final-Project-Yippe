@@ -21,6 +21,7 @@ public class BookingResponse {
     private Integer passengerCount = 1;
     private BigDecimal totalPrice;
     private String status;
+    private Boolean checkedIn;
     private PaymentResponse payment;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

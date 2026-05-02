@@ -14,37 +14,30 @@
 body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f7fa;
-    color: #333;
+    background: radial-gradient(circle at top, #fdf2f2, #f5f7fa 55%);
+    color: #2f3c4f;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 .header {
     background: linear-gradient(135deg, #d9001b 0%, #a80016 100%);
     color: white;
-    padding: 15px 30px;
+    padding: 18px 28px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.14);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
 }
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: 20px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
+    gap: 14px;
 }
 
 .brand-mark {
-    width: 42px;
-    height: 42px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     background: white;
     display: flex;
@@ -53,173 +46,328 @@ body {
 }
 
 .brand-mark svg {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
 }
 
-.header h2 {
-    margin: 0;
-    font-size: 20px;
+.brand-title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+
+.brand-subtitle {
+    font-size: 13px;
+    opacity: 0.85;
 }
 
 .logout {
+    border: 1px solid rgba(255,255,255,0.6);
+    padding: 10px 18px;
+    border-radius: 999px;
     cursor: pointer;
-    font-weight: 500;
+    background: rgba(255,255,255,0.12);
+    transition: background 0.2s ease;
 }
 
 .logout:hover {
-    text-decoration: underline;
+    background: rgba(255,255,255,0.22);
 }
 
-/* ===== CONTAINER ===== */
 .container {
-    width: calc(100% - 32px);
-    max-width: 540px;
+    width: min(1100px, calc(100% - 40px));
     margin: 28px auto 40px;
-    background: #fff;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(33, 40, 56, 0.12);
+    overflow: hidden;
+}
+
+main {
+    padding: 30px;
+}
+
+.message {
+    display: none;
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.message.success {
+    display: block;
+    background: #ecf8ef;
+    color: #1f6f3b;
+    border: 1px solid #8bd298;
+}
+
+.message.error {
+    display: block;
+    background: #fce8e8;
+    color: #991f1f;
+    border: 1px solid #e18686;
+}
+
+.profile-panel {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 28px;
+    align-items: stretch;
+}
+
+.profile-card-left,
+.profile-card-right {
+    background: #ffffff;
+    border-radius: 22px;
     padding: 28px;
-    border-radius: 18px;
-    box-shadow: 0 18px 48px rgba(0,0,0,0.08);
+    border: 1px solid #ecebf1;
 }
 
-/* ===== PROFILE IMAGE ===== */
-.profile-wrapper {
-    text-align: center;
-    margin-bottom: 24px;
-    padding: 24px 0 12px;
-    border-bottom: 1px solid #eee;
-}
-
-.profile-pic {
+.profile-avatar {
     width: 140px;
     height: 140px;
     border-radius: 50%;
     object-fit: cover;
-    border: 4px solid white;
-    background: #eee;
-    box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+    border: 6px solid #f7f4f4;
+    box-shadow: 0 18px 45px rgba(77, 82, 112, 0.08);
+    margin-bottom: 20px;
 }
 
-/* ===== FILE INPUT ===== */
-input[type="file"] {
-    display: block;
-    margin: 0 auto;
-    padding: 8px 0;
-    cursor: pointer;
+    .profile-picture-form {
+        display: grid;
+        gap: 12px;
+        margin-top: 18px;
+        width: 100%;
+    }
+
+    .profile-picture-form input[type="file"] {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        background: #f9fafb;
+        cursor: pointer;
+    }
+
+    .secondary {
+        background: #1f6eff;
+        color: white;
+        border: none;
+    }
+
+    .secondary:hover {
+        background: #145dd8;
+    }
+
+    .profile-name {
+        font-size: 24px;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .profile-role {
+        color: #9f1f1f;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        margin-bottom: 22px;
+    }
+
+.profile-actions {
+    display: grid;
+    gap: 12px;
 }
 
-/* ===== BUTTONS ===== */
-button {
-    width: 100%;
-    padding: 11px;
-    margin-top: 0;
+.action-btn {
+    padding: 14px 18px;
+    border-radius: 14px;
     border: none;
-    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.action-btn:hover {
+    transform: translateY(-1px);
+}
+
+.action-btn.primary {
+    background: #d9001b;
+    color: white;
+    box-shadow: 0 18px 30px rgba(217, 0, 27, 0.18);
+}
+
+.action-btn.danger {
+    background: #ffefef;
+    color: #9f1f1f;
+    border: 1px solid #f0c2c2;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid #eef0f5;
+    color: #4f5a75;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 600;
+}
+
+.detail-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.stat-value {
+    display: block;
+    font-size: 32px;
+    font-weight: 700;
+    color: #212d40;
+}
+
+.stat-label {
+    color: #7b8495;
+    font-size: 13px;
+}
+
+.bookings-section {
+    margin-top: 32px;
+}
+
+.section-header {
+    margin-bottom: 18px;
+}
+
+.section-header h2 {
+    font-size: 22px;
+    margin: 0 0 8px;
+}
+
+.empty-state {
+    color: #657085;
+    margin: 0;
+}
+
+.bookings-list {
+    display: grid;
+    gap: 18px;
+}
+
+.booking-card {
+    background: #f9fbff;
+    padding: 22px;
+    border-radius: 22px;
+    border: 1px solid #e8edf6;
+    box-shadow: 0 14px 30px rgba(56, 68, 98, 0.06);
+}
+
+.booking-card-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.booking-flight {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.booking-route {
+    color: #5d6f8c;
     font-size: 14px;
+    margin-top: 4px;
+}
+
+.status-badge {
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.status-confirmed {
+    background: #e8f6ef;
+    color: #257444;
+}
+
+.status-pending {
+    background: #fff4e6;
+    color: #9f611a;
+}
+
+.status-cancelled {
+    background: #fbe7e7;
+    color: #a72f2f;
+}
+
+.booking-detail {
+    color: #4f5a75;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 10px;
+}
+
+.booking-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.booking-actions button {
+    padding: 12px 16px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
     cursor: pointer;
     transition: 0.2s;
 }
 
-.button-group {
-    display: grid;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.upload-btn {
-    background: #d9001b;
+.booking-actions .secondary {
+    background: #1f6eff;
     color: white;
 }
 
-.upload-btn:hover {
-    background: #b30016;
+.booking-actions .secondary:hover {
+    background: #145dd8;
 }
 
-.delete-btn {
-    background: #990014;
+.booking-actions .danger {
+    background: #ee2d2d;
     color: white;
 }
 
-.delete-btn:hover {
-    background: #7a000f;
+.booking-actions .danger:hover {
+    background: #c21818;
 }
 
-.edit-btn {
-    background: #f1f3f5;
+@media (max-width: 900px) {
+    .profile-panel {
+        grid-template-columns: 1fr;
+    }
 }
 
-.edit-btn a {
-    text-decoration: none;
-    color: #333;
-    font-weight: 500;
-}
+@media (max-width: 620px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+    }
 
-/* ===== PROFILE INFO ===== */
-.profile-card {
-    background: #fafafa;
-    border-radius: 14px;
-    padding: 18px 18px 14px;
-    border: 1px solid #ececec;
-    margin-top: 20px;
-}
-
-.profile-card h3 {
-    margin: 0 0 14px;
-    color: #a80016;
-    font-size: 18px;
-    letter-spacing: 0.02em;
-}
-
-.profile-item {
-    display: grid;
-    grid-template-columns: 1fr 1.3fr;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-    font-size: 14px;
-}
-
-.profile-item:last-child {
-    border-bottom: none;
-}
-
-.profile-item label {
-    color: #777;
-}
-
-.profile-item span {
-    font-weight: 500;
-    color: #333;
-}
-
-/* ===== RESULT ===== */
-#result {
-    display: none;
-    text-align: center;
-    margin-bottom: 15px;
-    font-size: 14px;
-    padding: 12px 16px;
-    border-radius: 10px;
-}
-
-#result.success {
-    display: block;
-    background-color: #e8f5e9;
-    color: #2e7d32;
-    border: 2px solid #4caf50;
-}
-
-#result.error {
-    display: block;
-    background-color: #ffebee;
-    color: #c41e3a;
-    border: 2px solid #c41e3a;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 500px) {
     .container {
-        margin: 20px;
+        margin: 20px auto;
     }
 }
 </style>
@@ -228,73 +376,71 @@ button {
 <body>
 
     <div class="header">
-            <div class="brand">
-                <div class="brand-mark">
-                    <svg viewBox="0 0 24 24" fill="#d9001b" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C7.58 2 4 5.58 4 10C4 15.25 12 22 12 22C12 22 20 15.25 20 10C20 5.58 16.42 2 12 2Z"/><path d="M12 5.5L14.5 10H9.5L12 5.5Z" fill="white"/></svg>
-                </div>
-                <span>Turkish Airlines</span>
+        <div class="brand">
+            <div class="brand-mark">
+                <svg viewBox="0 0 24 24" fill="#d9001b" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C7.58 2 4 5.58 4 10C4 15.25 12 22 12 22C12 22 20 15.25 20 10C20 5.58 16.42 2 12 2Z"/><path d="M12 5.5L14.5 10H9.5L12 5.5Z" fill="white"/></svg>
             </div>
-            <div class="logout" onclick="logout()">Çıxış</div>
+            <div>
+                <div class="brand-title">Flight Booking</div>
+                <div class="brand-subtitle">Müştəri Profili</div>
+            </div>
         </div>
-    <div class="container">
-        <div id="result" class="result"></div>
-
-        <div class="profile-wrapper">
-            <img src="" alt="Profil şəkli" id="profileImage" class="profile-pic">
-        </div>
-
-
-
-        <div class="profile-card">
-            <h3>Profil Məlumatları</h3>
-            <div class="profile-item">
-            <label>Ad</label>
-            <span id="name"></span>
-        </div>
-        <div class="profile-item">
-            <label>Soyad</label>
-            <span id="surname"></span>
-        </div>
-        <div class="profile-item">
-            <label>Email</label>
-            <span id="email"></span>
-        </div>
-        <div class="profile-item">
-            <label>Telefon nömrəsi</label>
-            <span id="phone"></span>
-        </div>
-        <div class="profile-item">
-            <label>Doğum tarixi</label>
-            <span id="birthday"></span>
-        </div>
-        <div class="profile-item">
-            <label>İstifadəçi adı</label>
-            <span id="username"></span>
-        </div>
-
-        <div class="profile-item" style="margin-top:20px; border:none; padding:0;">
-            <label style="font-weight:700; font-size:16px; color:#2c3e50;">Bronlar</label>
-        </div>
-        <div id="bookingMessage" class="empty-state">Bronlar yüklənir...</div>
-        <div id="bookingsList"></div>
-
-        <div style="margin-top: 20px;">
-            <button class="edit-btn" onclick="goBack()">
-                < Ana səhifəyə qayıt
-            </button>
-        </div>
-
-        <div style="margin-top: 10px;">
-            <button class="delete-btn" onclick="deleteProfile()">Hesabı Sil</button>
-        </div>
+        <button class="logout" onclick="logout()">Çıxış</button>
     </div>
 
-    <script>
-            const token = localStorage.getItem("accessToken");
+    <main class="container">
+        <div id="result" class="message"></div>
 
-            if(!token) {
-                window.location.href="login.html";
-            }
+        <section class="profile-panel">
+            <div class="profile-card-left">
+                <img src="img/default-avatar.svg" alt="Profil şəkli" id="profileImage" class="profile-avatar">
+                <form id="pictureForm" class="profile-picture-form" onsubmit="uploadProfilePicture(event)">
+                    <input type="file" id="profilePictureInput" accept="image/*">
+                    <button type="submit" class="action-btn secondary">Şəkili Yadda Saxla</button>
+                    <button type="button" class="action-btn danger" onclick="deleteProfilePicture()">Şəkli Sil</button>
+                </form>
+                <div class="profile-name" id="profileName">Müştəri</div>
+                <div class="profile-role" id="profileRole">CUSTOMER</div>
+                <div class="profile-actions">
+                    <button class="action-btn primary" onclick="goBack()">Ana Səhifəyə Qayıt</button>
+                    <button class="action-btn danger" onclick="deleteProfile()">Hesabı Deaktiv et</button>
+                </div>
+            </div>
+            <div class="profile-card-right">
+                <div class="detail-row"><span class="detail-label">ID:</span> <span id="profileId">-</span></div>
+                <div class="detail-row"><span class="detail-label">İstifadəçi adı:</span> <span id="profileUsername">-</span></div>
+                <div class="detail-row"><span class="detail-label">Email:</span> <span id="profileEmail">-</span></div>
+                <div class="detail-row"><span class="detail-label">Vəzifə:</span> <span id="profileRoleLabel">-</span></div>
+                <div class="detail-row"><span class="detail-label">Hesab statusu:</span> <span id="profileStatus">Aktiv</span></div>
+                <div class="detail-stats">
+                    <div>
+                        <span class="stat-value" id="bookingCount">0</span>
+                        <span class="stat-label">Bronlar</span>
+                    </div>
+                    <div>
+                        <span class="stat-value" id="upcomingCount">0</span>
+                        <span class="stat-label">Gözləyən</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bookings-section">
+            <div class="section-header">
+                <h2>Son Bronlar</h2>
+                <p id="bookingMessage" class="empty-state">Bronlar yüklənir...</p>
+            </div>
+            <div id="bookingsList" class="bookings-list"></div>
+        </section>
+    </main>
+
+    <script>
+        const token = localStorage.getItem("accessToken");
+        const defaultProfileImage = "img/default-avatar.svg";
+
+        if (!token) {
+            window.location.href = "login.html";
+        }
 
         async function loadProfile() {
             try {
@@ -307,33 +453,31 @@ button {
 
                 const data = await response.json();
 
-                if(!response.ok || !data.success) {
-                    document.getElementById("result").innerText = data.message || "Profil məlumatlarını yükləmək mümkün olmadı";
+                if (!response.ok || !data.success) {
+                    showMessage(data.message || "Profil məlumatlarını yükləmək mümkün olmadı.", "error");
                     return;
                 }
 
                 const profile = data.data;
-                const [firstName, ...rest] = (profile.fullName || "").split(" ");
-                const lastName = rest.join(" ");
-
-                document.getElementById("name").innerText = firstName || "-";
-                document.getElementById("surname").innerText = lastName || "-";
-                document.getElementById("email").innerText = profile.email || "-";
-                document.getElementById("phone").innerText = profile.phone || "-";
-                document.getElementById("birthday").innerText = profile.birthday || "-";
-                document.getElementById("username").innerText = profile.username || "-";
-
-                document.getElementById("profileImage").src = "https://via.placeholder.com/120";
+                document.getElementById("profileName").innerText = profile.fullName || profile.username || "Müştəri";
+                document.getElementById("profileEmail").innerText = profile.email || "-";
+                document.getElementById("profileUsername").innerText = profile.username || "-";
+                document.getElementById("profileId").innerText = profile.id || "-";
+                document.getElementById("profileRole").innerText = profile.role || "CUSTOMER";
+                document.getElementById("profileRoleLabel").innerText = profile.role || "Müştəri";
+                document.getElementById("profileStatus").innerText = profile.role ? "Aktiv" : "-";
+                document.getElementById("profileImage").src = profile.profilePictureUrl || defaultProfileImage;
+                document.getElementById("bookingCount").innerText = "...";
+                document.getElementById("upcomingCount").innerText = "...";
 
                 loadBookings();
-            } catch(e) {
-                document.getElementById("result").innerText = "Profil məlumatlarını yükləmək mümkün olmadı";
+            } catch (e) {
+                showMessage("Profil məlumatlarını yükləmək mümkün olmadı.", "error");
             }
         }
 
         async function loadBookings() {
             try {
-                console.log("🔍 Loading bookings...");
                 const response = await fetch("http://localhost:8080/api/bookings/my-bookings?page=0&size=20", {
                     method: "GET",
                     headers: {
@@ -342,43 +486,88 @@ button {
                 });
 
                 const data = await response.json();
-                console.log("📦 Bookings API response:", data);
-
                 const bookingMessage = document.getElementById("bookingMessage");
                 const bookingsList = document.getElementById("bookingsList");
 
-                if(!response.ok || !data.success) {
-                    console.error("❌ Bookings API error:", data.message, "Status:", response.status);
-                    bookingMessage.innerText = data.message || "Bronları yükləmək mümkün olmadı";
+                if (!response.ok || !data.success) {
+                    bookingMessage.innerText = data.message || "Bronları yükləmək mümkün olmadı.";
                     bookingsList.innerHTML = "";
                     return;
                 }
 
                 const bookings = data.data?.content || [];
-                console.log("📋 Bookings found:", bookings.length);
-                console.log("🔎 Bookings data:", bookings);
+                const pending = bookings.filter((b) => b.status === 'PENDING').length;
 
-                if(bookings.length === 0) {
+                document.getElementById("bookingCount").innerText = bookings.length;
+                document.getElementById("upcomingCount").innerText = pending;
+
+                if (bookings.length === 0) {
                     bookingMessage.innerText = "Hələ bronunuz yoxdur.";
                     bookingsList.innerHTML = "";
                     return;
                 }
 
                 bookingMessage.innerText = "";
-                bookingsList.innerHTML = bookings.map(booking => `
-                    <div class="booking-card">
-                        <div class="booking-row"><span><strong>Uçuş:</strong> ${booking.flight?.flightNumber || 'N/A'}</span> <span>${booking.flight?.origin || ''} → ${booking.flight?.destination || ''}</span></div>
-                        <div class="booking-row"><span><strong>Tarix:</strong> ${booking.flight?.departureTime ? new Date(booking.flight.departureTime).toLocaleString('az-AZ') : 'N/A'}</span></div>
-                        <div class="booking-row"><span><strong>Oturacaq:</strong> ${booking.seat?.seatNumber || 'N/A'} (${booking.seat?.seatClass || 'N/A'})</span></div>
-                        <div class="booking-row"><span><strong>Passajer:</strong> ${booking.passengerName || 'N/A'}</span></div>
-                        <div class="booking-row"><span><strong>Qiymət:</strong> ₼${parseFloat(booking.totalPrice || 0).toFixed(2)}</span></div>
-                        <div class="booking-row status-row"><span><strong>Status:</strong> ${booking.status || 'N/A'}</span></div>
-                        ${booking.status === 'PENDING' ? `<button class="pay-btn" onclick="payBooking(${booking.id})">Ödəniş et</button>` : ''}
-                        ${booking.status !== 'CANCELLED' && booking.status !== 'CONFIRMED' ? `<button class="cancel-btn" onclick="cancelBooking(${booking.id})">Ləğv et</button>` : ''}
-`).join(""); 
-            } catch(e) {
-                console.error("❌ Bookings load exception:", e);
-                document.getElementById("bookingMessage").innerText = "Bronları yükləmək mümkün olmadı";
+                bookingsList.innerHTML = bookings
+                    .map((booking) => {
+                        const statusLabel = booking.status || 'N/A';
+                        const statusClass = statusLabel === 'CONFIRMED'
+                            ? 'status-confirmed'
+                            : statusLabel === 'CANCELLED'
+                                ? 'status-cancelled'
+                                : 'status-pending';
+
+                        return `
+                            <article class="booking-card">
+                                <div class="booking-card-header">
+                                    <div>
+                                        <div class="booking-flight">${booking.flight?.flightNumber || 'Uçuş nömrəsi yoxdur'}</div>
+                                        <div class="booking-route">${booking.flight?.origin || 'N/A'} → ${booking.flight?.destination || 'N/A'}</div>
+                                    </div>
+                                    <span class="status-badge ${statusClass}">${statusLabel}</span>
+                                </div>
+                                <div class="booking-detail">${booking.flight?.departureTime ? new Date(booking.flight.departureTime).toLocaleString('az-AZ') : 'Tarix yoxdur'}</div>
+                                <div class="booking-detail"><strong>Oturacaq:</strong> ${booking.seat?.seatNumber || 'N/A'} (${booking.seat?.seatClass || 'N/A'})</div>
+                                <div class="booking-detail"><strong>Passajer:</strong> ${booking.passengerName || 'N/A'}</div>
+                                <div class="booking-detail"><strong>Qiymət:</strong> ₼${parseFloat(booking.totalPrice || 0).toFixed(2)}</div>
+                                <div class="booking-detail"><strong>Check-in:</strong> ${booking.checkedIn ? 'Bəli' : 'Yox'}</div>
+                                <div class="booking-actions">
+                                    ${booking.status === 'PENDING' ? `<button class="secondary" onclick="payBooking(${booking.id})">Ödəniş et</button>` : ''}
+                                    ${booking.status === 'CONFIRMED' && !booking.checkedIn ? `<button class="secondary" onclick="checkInBooking(${booking.id})">Check-in</button>` : ''}
+                                    ${booking.status === 'CONFIRMED' && booking.checkedIn ? `<button class="secondary" disabled>Check-in tamamlandı</button>` : ''}
+                                    ${booking.status !== 'CANCELLED' && booking.status !== 'CONFIRMED' ? `<button class="danger" onclick="cancelBooking(${booking.id})">Ləğv et</button>` : ''}
+                                </div>
+                            </article>
+                        `;
+                    })
+                    .join("");
+            } catch (e) {
+                document.getElementById("bookingMessage").innerText = "Bronları yükləmək mümkün olmadı.";
+                document.getElementById("bookingsList").innerHTML = "";
+            }
+        }
+
+        async function cancelBooking(bookingId) {
+            if (!confirm("Bu bronu ləğv etmək istədiyinizə əminsiniz?")) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/bookings/${bookingId}`, {
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    showMessage("Bron uğurla ləğv edildi.", "success");
+                    loadBookings();
+                } else {
+                    showMessage(data.message || "Ləğv etmək mümkün olmadı.", "error");
+                }
+            } catch (e) {
+                showMessage("Server xətası baş verdi.", "error");
             }
         }
 
@@ -390,62 +579,128 @@ button {
             window.location.href = `payment.html?bookingId=${bookingId}`;
         }
 
-        async function cancelBooking(bookingId) {
-            if (!confirm("Bu brionu ləğv etmək istədiyinizə əminsiniz?")) {
+        function logout() {
+            localStorage.removeItem("accessToken");
+            window.location.href = "login.html";
+        }
+
+        async function uploadProfilePicture(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById("profilePictureInput");
+            const file = fileInput.files[0];
+            if (!file) {
+                showMessage("Zəhmət olmasa şəkil seçin.", "error");
                 return;
             }
+
+            const formData = new FormData();
+            formData.append("file", file);
+
             try {
-                const token = localStorage.getItem("accessToken");
-                const response = await fetch(`http://localhost:8080/api/bookings/${bookingId}`, {
+                const response = await fetch("http://localhost:8080/api/customers/me/profile-picture", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    body: formData
+                });
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    document.getElementById("profileImage").src = data.data.profilePictureUrl || defaultProfileImage;
+                    showMessage("Profil şəkli uğurla yeniləndi.", "success");
+                    fileInput.value = "";
+                } else {
+                    showMessage(data.message || "Şəkli yükləmək mümkün olmadı.", "error");
+                }
+            } catch (e) {
+                showMessage("Server xətası baş verdi.", "error");
+            }
+        }
+
+        async function deleteProfilePicture() {
+            const confirmDelete = confirm("Profil şəklinizi silmək istədiyinizə əminsiniz?");
+            if (!confirmDelete) {
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:8080/api/customers/me/profile-picture", {
                     method: "DELETE",
                     headers: {
                         "Authorization": "Bearer " + token
                     }
                 });
                 const data = await response.json();
-                if (response.ok) {
-                    alert("Bron ləğv edildi");
-                    loadBookings(); // Reload bookings
+                if (response.ok && data.success) {
+                    document.getElementById("profileImage").src = defaultProfileImage;
+                    showMessage("Profil şəkli uğurla silindi.", "success");
                 } else {
-                    alert(data.message || "Ləğv etmək mümkün olmadı");
+                    showMessage(data.message || "Profil şəklini silmək mümkün olmadı.", "error");
                 }
             } catch (e) {
-                alert("Xəta baş verdi");
+                showMessage("Server xətası baş verdi.", "error");
             }
         }
 
-        function logout() {
-            localStorage.removeItem("accessToken");
-            window.location.href="login.html";
+        async function checkInBooking(bookingId) {
+            if (!confirm("Bu bron üçün check-in etmək istədiyinizə əminsiniz?")) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8080/api/bookings/${bookingId}/check-in`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    showMessage("Check-in uğurla tamamlandı.", "success");
+                    loadBookings();
+                } else {
+                    showMessage(data.message || "Check-in etmək mümkün olmadı.", "error");
+                }
+            } catch (e) {
+                showMessage("Server xətası baş verdi.", "error");
+            }
         }
 
         async function deleteProfile() {
             const confirmDelete = confirm(
-                "Hesabınızı silmək istədiyinizə əminsinizmi?\nBu əməliyyat geri qaytarıla bilməz!"
+                "Hesabınızı deaktiv etmək istədiyinizə əminsinizmi?\nBu əməliyyat sizi sistemdən çıxaracaq."
             );
 
-            if(!confirmDelete) {
+            if (!confirmDelete) {
                 return;
             }
 
             try {
                 const response = await fetch("http://localhost:8080/api/customers", {
-                    method:"DELETE",
-                    headers: {"Authorization" : "Bearer " + token}
+                    method: "DELETE",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
                 });
 
                 const data = await response.json();
-
-                if(response.ok) {
-                    alert("Hesab silindi");
+                if (response.ok && data.success) {
+                    showMessage("Hesabınız deaktiv edildi. Yenidən daxil olmaq üçün qeydiyyatdan keçməlisiniz.", "success");
                     localStorage.removeItem("accessToken");
-                    window.location.href="login.html";
+                    setTimeout(() => window.location.href = "login.html", 1200);
                 } else {
-                    alert("Hesabı silmək mümkün olmadı")
+                    showMessage(data.message || "Hesabı deaktiv etmək mümkün olmadı.", "error");
                 }
-            }catch(e) {
-                alert("Server Error");
+            } catch (e) {
+                showMessage("Server xətası baş verdi.", "error");
             }
+        }
+
+        function showMessage(text, type) {
+            const result = document.getElementById("result");
+            result.textContent = text;
+            result.className = `message ${type}`;
+            result.style.display = "block";
         }
 
         loadProfile();

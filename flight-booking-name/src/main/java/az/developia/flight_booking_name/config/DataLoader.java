@@ -186,26 +186,40 @@ public class DataLoader {
     }
 
     private void createSeats(Plane plane, int businessSeats, int economySeats) {
-        // Create business seats
-        for (int i = 1; i <= businessSeats; i++) {
-            String seatNumber = i + "A";
-            Seat seat = Seat.builder()
-                    .seatNumber(seatNumber)
-                    .seatClass(SeatClass.BUSINESS)
-                    .plane(plane)
-                    .build();
-            seatRepository.save(seat);
+        String[] businessColumns = {"A", "B", "C", "D"};
+        String[] economyColumns = {"A", "B", "C", "D", "E", "F"};
+
+        int businessRows = (businessSeats + businessColumns.length - 1) / businessColumns.length;
+        int economyRows = (economySeats + economyColumns.length - 1) / economyColumns.length;
+
+        int createdBusiness = 0;
+        for (int row = 1; row <= businessRows; row++) {
+            for (String col : businessColumns) {
+                if (createdBusiness >= businessSeats) break;
+                String seatNumber = row + col;
+                Seat seat = Seat.builder()
+                        .seatNumber(seatNumber)
+                        .seatClass(SeatClass.BUSINESS)
+                        .plane(plane)
+                        .build();
+                seatRepository.save(seat);
+                createdBusiness++;
+            }
         }
 
-        // Create economy seats
-        for (int i = 1; i <= economySeats; i++) {
-            String seatNumber = i + "B";
-            Seat seat = Seat.builder()
-                    .seatNumber(seatNumber)
-                    .seatClass(SeatClass.ECONOMY)
-                    .plane(plane)
-                    .build();
-            seatRepository.save(seat);
+        int createdEconomy = 0;
+        for (int row = businessRows + 1; row <= businessRows + economyRows; row++) {
+            for (String col : economyColumns) {
+                if (createdEconomy >= economySeats) break;
+                String seatNumber = row + col;
+                Seat seat = Seat.builder()
+                        .seatNumber(seatNumber)
+                        .seatClass(SeatClass.ECONOMY)
+                        .plane(plane)
+                        .build();
+                seatRepository.save(seat);
+                createdEconomy++;
+            }
         }
     }
 }

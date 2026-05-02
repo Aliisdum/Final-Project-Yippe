@@ -42,34 +42,30 @@ public class CustomerController {
         return userService.getUserByUsername(authentication.getName()).getId();
     }
 
-    private UserResponse mapToUserResponse(User user) {
-        String fullName = user.getFullName() != null ? user.getFullName().trim() : "";
-        String[] nameParts = fullName.split(" ");
-        String firstName = nameParts.length > 0 ? nameParts[0] : "";
-        String lastName = nameParts.length > 1 ? String.join(" ", java.util.Arrays.copyOfRange(nameParts, 1, nameParts.length)) : "";
-
-        return UserResponse.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .fullName(fullName)
-                .name(firstName)
-                .surname(lastName)
-                .role(user.getRole().toString())
-                .build();
-    }
-
     @GetMapping("/me")
     @PreAuthorize("hasRole('CUSTOMER')")
     @Operation(summary = "Get current customer profile", description = "Returns current authenticated customer profile")
     public ResponseEntity<ApiResponse<UserResponse>> getMyProfile() {
         Long userId = getCurrentUserId();
         var user = userService.getUserById(userId);
-        var response = mapToUserResponse(user);
+        var response = userService.mapToUserResponse(user);
         return ResponseEntity.ok(ApiResponse.<UserResponse>builder()
                 .success(true)
                 .message("Customer profile retrieved successfully")
                 .data(response)
+                .statusCode(HttpStatus.OK.value())
+                .build());
+    }
+
+    @DeleteMapping
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "Disable customer account", description = "Disable the currently authenticated customer account")
+    public ResponseEntity<ApiResponse<?>> deactivateMyAccount() {
+        Long userId = getCurrentUserId();
+        userService.disableUser(userId);
+        return ResponseEntity.ok(ApiResponse.builder()
+                .success(true)
+                .message("Account disabled successfully")
                 .statusCode(HttpStatus.OK.value())
                 .build());
     }
@@ -90,5 +86,33 @@ public class CustomerController {
                 .build());
     }
 
+    @PostMapping(value = "/me/profile-picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "Upload profile picture", description = "Upload or change the authenticated customer profile picture")
+    public ResponseEntity<ApiResponse<UserResponse>> uploadProfilePicture(@RequestParam("file") MultipartFile file) {
+        Long userId = getCurrentUserId();
+        userService.saveProfilePicture(userId, file);
+        var user = userService.getUserById(userId);
+        var response = userService.mapToUserResponse(user);
+        return ResponseEntity.ok(ApiResponse.<UserResponse>builder()
+                .success(true)
+                .message("Profile picture updated successfully")
+                .data(response)
+                .statusCode(HttpStatus.OK.value())
+                .build());
+    }
+
+    @DeleteMapping("/me/profile-picture")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "Delete profile picture", description = "Remove the authenticated customer profile picture")
+    public ResponseEntity<ApiResponse<?>> deleteProfilePicture() {
+        Long userId = getCurrentUserId();
+        userService.deleteProfilePicture(userId);
+        return ResponseEntity.ok(ApiResponse.builder()
+                .success(true)
+                .message("Profile picture deleted successfully")
+                .statusCode(HttpStatus.OK.value())
+                .build());
+    }
 
 }
